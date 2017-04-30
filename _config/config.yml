@@ -1,0 +1,9 @@
+---
+Name: silverware-navigation
+---
+
+# Configure Page Extensions:
+
+Page:
+  extensions:
+    - SilverWare\Navigation\Extensions\PageExtension

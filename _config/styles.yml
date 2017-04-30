@@ -1,0 +1,38 @@
+---
+Name: silverware-navigation-styles
+---
+
+# Configure Bootstrap Styles:
+
+SilverWare\Grid\Frameworks\Bootstrap\Framework:
+  style_mappings:
+    breadcrumb:
+      breadcrumb: breadcrumb
+      item: breadcrumb-item
+      active: active
+    collapse:
+      collapse: collapse
+    navbar:
+      navbar: navbar
+      active: active
+      brand: navbar-brand
+      button: navbar-toggler
+      button-icon: navbar-toggler-icon
+      button-left: navbar-toggler-left
+      button-right: navbar-toggler-right
+      collapse: navbar-collapse
+      dropdown: dropdown
+      dropdown-item: dropdown-item
+      dropdown-menu: dropdown-menu
+      dropdown-toggle: dropdown-toggle
+      fg-light: navbar-inverse
+      fg-dark: navbar-light
+      nav: navbar-nav
+      nav-item: nav-item
+      nav-link: nav-link
+      text: navbar-text
+      toggleable-tiny: navbar-toggleable
+      toggleable-small: navbar-toggleable-sm
+      toggleable-medium: navbar-toggleable-md
+      toggleable-large: navbar-toggleable-lg
+      toggleable-huge: navbar-toggleable-xl
