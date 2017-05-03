@@ -165,8 +165,8 @@ class LevelNavigation extends BaseComponent
      */
     public function getTitleText()
     {
-        if ($this->UseLevelTitle) {
-            return $this->getLevel()->MenuTitle;
+        if ($this->UseLevelTitle && ($level = $this->getLevel())) {
+            return $level->MenuTitle;
         }
         
         return parent::getTitleText();
