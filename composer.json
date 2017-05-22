@@ -19,7 +19,7 @@
   ],
   "require": {
     "php": ">=5.6.0",
-    "silverware/silverware": "^0.2@dev"
+    "silverware/silverware": "^0.3@dev"
   },
   "autoload": {
     "psr-4": {
