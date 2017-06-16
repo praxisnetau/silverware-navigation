@@ -18,10 +18,11 @@
 namespace SilverWare\Navigation\Extensions;
 
 use SilverStripe\Forms\CheckboxField;
-use SilverStripe\Forms\CompositeField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\Security\Permission;
+use SilverWare\Forms\FieldSection;
+use SilverWare\Navigation\Components\InlineNavigation;
 
 /**
  * A data extension which adds navigation settings to pages.
@@ -55,6 +56,16 @@ class PageExtension extends DataExtension
     ];
     
     /**
+     * Defines the reciprocal many-many associations for this object.
+     *
+     * @var array
+     * @config
+     */
+    private static $belongs_many_many = [
+        'InlineNavigations' => InlineNavigation::class
+    ];
+    
+    /**
      * Updates the CMS settings fields of the extended object.
      *
      * @param FieldList $fields Collection of CMS settings fields from the extended object.
@@ -67,12 +78,16 @@ class PageExtension extends DataExtension
         
         $fields->addFieldToTab(
             'Root.Settings',
-            $settings = CompositeField::create([
-                CheckboxField::create(
-                    'CrumbsDisabled',
-                    $this->owner->fieldLabel('CrumbsDisabled')
-                )
-            ])->setName('NavigationSettings')->setTitle($this->owner->fieldLabel('NavigationSettings'))
+            $settings = FieldSection::create(
+                'NavigationSettings',
+                $this->owner->fieldLabel('NavigationSettings'),
+                [
+                    CheckboxField::create(
+                        'CrumbsDisabled',
+                        $this->owner->fieldLabel('CrumbsDisabled')
+                    )
+                ]
+            )
         );
         
         // Check Permissions and Modify Fields:

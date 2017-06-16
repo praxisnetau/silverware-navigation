@@ -3,4 +3,8 @@
 
 // Load Styles:
 
-require('../styles/bundle.scss');
+require('styles/bundle.scss');
+
+// Load Components:
+
+require('components/InlineNavigation.js');

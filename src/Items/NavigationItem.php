@@ -18,8 +18,8 @@
 namespace SilverWare\Navigation\Items;
 
 use SilverStripe\Forms\CheckboxField;
-use SilverStripe\Forms\CompositeField;
 use SilverStripe\View\ArrayData;
+use SilverWare\Forms\FieldSection;
 use SilverWare\Navigation\Model\BarItem;
 use SilverWare\Tools\ViewTools;
 use PageController;
@@ -50,6 +50,14 @@ class NavigationItem extends BarItem
      * @config
      */
     private static $plural_name = 'Navigation Items';
+    
+    /**
+     * Description of this object.
+     *
+     * @var string
+     * @config
+     */
+    private static $description = 'A bar item which shows the main navigation';
     
     /**
      * Defines an ancestor class to hide from the admin interface.
@@ -95,12 +103,16 @@ class NavigationItem extends BarItem
         $fields->addFieldsToTab(
             'Root.Options',
             [
-                CompositeField::create([
-                    CheckboxField::create(
-                        'ShowSubMenus',
-                        $this->fieldLabel('ShowSubMenus')
-                    )
-                ])->setName('NavigationItemOptions')->setTitle($this->i18n_singular_name())
+                FieldSection::create(
+                    'NavigationItemOptions',
+                    $this->i18n_singular_name(),
+                    [
+                        CheckboxField::create(
+                            'ShowSubMenus',
+                            $this->fieldLabel('ShowSubMenus')
+                        )
+                    ]
+                )
             ]
         );
         
@@ -155,7 +167,7 @@ class NavigationItem extends BarItem
      *
      * @param string $mode Linking mode of the current item.
      * @param string $segment URL segment of the current item.
-     * @param boolean $dropdown If true, current item has children.
+     * @param boolean $children If true, current item has children.
      *
      * @return ArrayData
      */
@@ -230,7 +242,7 @@ class NavigationItem extends BarItem
      */
     public function getMenu($level = 1)
     {
-        if ($controller = $this->Parent()->getCurrentController(PageController::class)) {
+        if ($controller = $this->getCurrentController(PageController::class)) {
             return $controller->getMenu($level);
         }
     }

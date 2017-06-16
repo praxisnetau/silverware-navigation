@@ -17,7 +17,6 @@
 
 namespace SilverWare\Navigation\Items;
 
-use SilverStripe\Forms\TextField;
 use SilverWare\Navigation\Model\BarItem;
 
 /**
@@ -48,22 +47,20 @@ class TextItem extends BarItem
     private static $plural_name = 'Text Items';
     
     /**
+     * Description of this object.
+     *
+     * @var string
+     * @config
+     */
+    private static $description = 'A bar item to show a string of text';
+    
+    /**
      * Defines an ancestor class to hide from the admin interface.
      *
      * @var string
      * @config
      */
     private static $hide_ancestor = BarItem::class;
-    
-    /**
-     * Maps field names to field types for this object.
-     *
-     * @var array
-     * @config
-     */
-    private static $db = [
-        'Text' => 'Varchar(255)'
-    ];
     
     /**
      * Answers a list of field objects for the CMS interface.
@@ -76,43 +73,18 @@ class TextItem extends BarItem
         
         $fields = parent::getCMSFields();
         
-        // Create Main Fields:
+        // Modify Field Objects:
         
-        $fields->addFieldsToTab(
-            'Root.Main',
-            [
-                TextField::create(
-                    'Text',
-                    $this->fieldLabel('Text')
-                )
-            ]
+        $fields->fieldByName('Root.Main.Title')->setRightTitle(
+            _t(
+                __CLASS__ . '.TITLERIGHTTITLE',
+                'Shown as text in the navigation bar.'
+            )
         );
         
         // Answer Field Objects:
         
         return $fields;
-    }
-    
-    /**
-     * Answers the labels for the fields of the receiver.
-     *
-     * @param boolean $includerelations Include labels for relations.
-     *
-     * @return array
-     */
-    public function fieldLabels($includerelations = true)
-    {
-        // Obtain Field Labels (from parent):
-        
-        $labels = parent::fieldLabels($includerelations);
-        
-        // Define Field Labels:
-        
-        $labels['Text'] = _t(__CLASS__ . '.TEXT', 'Text');
-        
-        // Answer Field Labels:
-        
-        return $labels;
     }
     
     /**

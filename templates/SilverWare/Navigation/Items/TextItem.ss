@@ -1,3 +1,3 @@
 <span $AttributesHTML>
-  $Text
+  $Title
 </span>

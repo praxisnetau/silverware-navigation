@@ -1,0 +1,49 @@
+/* Inline Navigation Styles
+===================================================================================================================== */
+
+.inlinenavigation {
+  
+  ul.links {
+    
+    margin: 0;
+    padding: 0;
+    font-size: 0;
+    list-style-type: none;
+    
+    > li {
+      
+      margin: 0 $spacer-half;
+      display: inline-block;
+      
+      &:first-child {
+        margin-left: 0;
+      }
+      
+      &:last-child {
+        margin-right: 0;
+      }
+      
+      > a {
+        
+        display: inline-block;
+        font-size: $font-size-base;
+        
+        &:hover,
+        &:focus,
+        &:active {
+          
+          text-decoration: none;
+          
+          > span {
+            text-decoration: underline;
+          }
+          
+        }
+        
+      }
+      
+    }
+    
+  }
+  
+}

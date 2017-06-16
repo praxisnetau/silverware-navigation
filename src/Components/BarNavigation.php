@@ -18,15 +18,12 @@
 namespace SilverWare\Navigation\Components;
 
 use SilverStripe\Forms\CheckboxField;
-use SilverStripe\Forms\CompositeField;
 use SilverStripe\Forms\DropdownField;
-use SilverStripe\Forms\GridField\GridField;
-use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 use SilverStripe\Forms\Tab;
 use SilverStripe\Forms\TextField;
-use SilverStripe\Forms\TreeDropdownField;
 use SilverWare\Components\BaseComponent;
-use SilverWare\Forms\GridField\GridFieldConfig_OrderableEditor;
+use SilverWare\Forms\FieldSection;
+use SilverWare\Forms\PageDropdownField;
 use SilverWare\Forms\ViewportField;
 use SilverWare\Navigation\Model\BarItem;
 use Page;
@@ -134,16 +131,6 @@ class BarNavigation extends BaseComponent
     ];
     
     /**
-     * Defines the has-many associations for this object.
-     *
-     * @var array
-     * @config
-     */
-    private static $has_many = [
-        'Items' => BarItem::class
-    ];
-    
-    /**
      * Defines the default values for the fields of this object.
      *
      * @var array
@@ -159,6 +146,16 @@ class BarNavigation extends BaseComponent
     ];
     
     /**
+     * Defines the allowed children for this object.
+     *
+     * @var array|string
+     * @config
+     */
+    private static $allowed_children = [
+        BarItem::class
+    ];
+    
+    /**
      * Maps field and method names to the class names of casting objects.
      *
      * @var array
@@ -169,17 +166,7 @@ class BarNavigation extends BaseComponent
     ];
     
     /**
-     * Defines the allowed children for this object.
-     *
-     * @var array|string
-     * @config
-     */
-    private static $allowed_children = 'none';
-    
-    /**
      * Answers a list of field objects for the CMS interface.
-     *
-     * @todo Use GridFieldConfig_OrderableEditor once silverstripe-australia/gridfieldextensions is fixed. :(
      *
      * @return FieldList
      */
@@ -198,38 +185,15 @@ class BarNavigation extends BaseComponent
                     'BrandText',
                     $this->fieldLabel('BrandText')
                 ),
-                TreeDropdownField::create(
+                PageDropdownField::create(
                     'BrandPageID',
-                    $this->fieldLabel('BrandPageID'),
-                    Page::class
+                    $this->fieldLabel('BrandPageID')
                 ),
                 TextField::create(
                     'ButtonLabel',
                     $this->fieldLabel('ButtonLabel')
                 )
             ]
-        );
-        
-        // Insert Items Tab:
-        
-        $fields->insertAfter(
-            Tab::create(
-                'Items',
-                $this->fieldLabel('Items')
-            ),
-            'Main'
-        );
-        
-        // Add Items Grid Field to Tab:
-        
-        $fields->addFieldToTab(
-            'Root.Items',
-            GridField::create(
-                'Items',
-                $this->fieldLabel('Items'),
-                $this->Items(),
-                GridFieldConfig_RecordEditor::create()
-            )
         );
         
         // Define Placeholder:
@@ -240,49 +204,57 @@ class BarNavigation extends BaseComponent
         
         $fields->addFieldToTab(
             'Root.Style',
-            CompositeField::create([
-                DropdownField::create(
-                    'Background',
-                    $this->fieldLabel('Background'),
-                    $this->getBackgroundOptions()
-                )->setEmptyString(' ')->setAttribute('data-placeholder', $placeholder),
-                DropdownField::create(
-                    'Foreground',
-                    $this->fieldLabel('Foreground'),
-                    $this->getForegroundOptions()
-                )->setEmptyString(' ')->setAttribute('data-placeholder', $placeholder),
-                DropdownField::create(
-                    'ButtonAlignment',
-                    $this->fieldLabel('ButtonAlignment'),
-                    $this->getButtonAlignmentOptions()
-                )->setEmptyString(' ')->setAttribute('data-placeholder', $placeholder),
-                DropdownField::create(
-                    'Position',
-                    $this->fieldLabel('Position'),
-                    $this->getPositionOptions()
-                )->setEmptyString(' ')->setAttribute('data-placeholder', $placeholder)
-            ])->setName('BarNavigationStyle')->setTitle($this->i18n_singular_name())
+            FieldSection::create(
+                'BarNavigationStyle',
+                $this->i18n_singular_name(),
+                [
+                    DropdownField::create(
+                        'Background',
+                        $this->fieldLabel('Background'),
+                        $this->getBackgroundOptions()
+                    )->setEmptyString(' ')->setAttribute('data-placeholder', $placeholder),
+                    DropdownField::create(
+                        'Foreground',
+                        $this->fieldLabel('Foreground'),
+                        $this->getForegroundOptions()
+                    )->setEmptyString(' ')->setAttribute('data-placeholder', $placeholder),
+                    DropdownField::create(
+                        'ButtonAlignment',
+                        $this->fieldLabel('ButtonAlignment'),
+                        $this->getButtonAlignmentOptions()
+                    )->setEmptyString(' ')->setAttribute('data-placeholder', $placeholder),
+                    DropdownField::create(
+                        'Position',
+                        $this->fieldLabel('Position'),
+                        $this->getPositionOptions()
+                    )->setEmptyString(' ')->setAttribute('data-placeholder', $placeholder)
+                ]
+            )
         );
         
         // Create Options Fields:
         
         $fields->addFieldToTab(
             'Root.Options',
-            CompositeField::create([
-                ViewportField::create(
-                    'ToggleOn',
-                    $this->fieldLabel('ToggleOn')
-                )->setRightTitle(
-                    _t(
-                        __CLASS__ . '.TOGGLEONRIGHTTITLE',
-                        'Specifies the maximum viewport size to activate toggle.'
+            FieldSection::create(
+                'BarNavigationOptions',
+                $this->i18n_singular_name(),
+                [
+                    ViewportField::create(
+                        'ToggleOn',
+                        $this->fieldLabel('ToggleOn')
+                    )->setRightTitle(
+                        _t(
+                            __CLASS__ . '.TOGGLEONRIGHTTITLE',
+                            'Specifies the maximum viewport size to activate toggle.'
+                        )
+                    ),
+                    CheckboxField::create(
+                        'BrandLinkDisabled',
+                        $this->fieldLabel('BrandLinkDisabled')
                     )
-                ),
-                CheckboxField::create(
-                    'BrandLinkDisabled',
-                    $this->fieldLabel('BrandLinkDisabled')
-                )
-            ])->setName('BarNavigationOptions')->setTitle($this->i18n_singular_name())
+                ]
+            )
         );
         
         // Answer Field Objects:
@@ -305,7 +277,6 @@ class BarNavigation extends BaseComponent
         
         // Define Field Labels:
         
-        $labels['Items'] = _t(__CLASS__ . '.ITEMS', 'Items');
         $labels['ToggleOn'] = _t(__CLASS__ . '.TOGGLEON', 'Toggle on');
         $labels['BrandText'] = _t(__CLASS__ . '.BRANDTEXT', 'Brand text');
         $labels['BrandPageID'] = _t(__CLASS__ . '.BRANDPAGE', 'Brand page');
@@ -514,13 +485,23 @@ class BarNavigation extends BaseComponent
     }
     
     /**
+     * Answers a list of all items within the receiver.
+     *
+     * @return DataList
+     */
+    public function getItems()
+    {
+        return $this->AllChildren();
+    }
+    
+    /**
      * Answers a list of the enabled items within the receiver.
      *
      * @return ArrayList
      */
     public function getEnabledItems()
     {
-        return $this->Items()->filterByCallback(function ($item) {
+        return $this->getItems()->filterByCallback(function ($item) {
             return $item->isEnabled();
         });
     }

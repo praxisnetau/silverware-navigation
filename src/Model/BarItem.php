@@ -17,17 +17,10 @@
 
 namespace SilverWare\Navigation\Model;
 
-use SilverStripe\Forms\RequiredFields;
-use SilverStripe\Forms\TextField;
-use SilverWare\Extensions\RenderableExtension;
-use SilverWare\Navigation\Components\BarNavigation;
-use SilverWare\ORM\MultiClassObject;
-use SilverWare\View\GridAware;
-use SilverWare\View\Renderable;
-use SilverWare\View\ViewClasses;
+use SilverWare\Model\Component;
 
 /**
- * An extension of the multi-class object class for a navigation bar item.
+ * An extension of the component object class for a navigation bar item.
  *
  * @package SilverWare\Navigation\Model
  * @author Colin Tucker <colin@praxis.net.au>
@@ -35,12 +28,8 @@ use SilverWare\View\ViewClasses;
  * @license https://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
  * @link https://github.com/praxisnetau/silverware-navigation
  */
-class BarItem extends MultiClassObject
+class BarItem extends Component
 {
-    use GridAware;
-    use Renderable;
-    use ViewClasses;
-    
     /**
      * Human-readable singular name.
      *
@@ -58,145 +47,36 @@ class BarItem extends MultiClassObject
     private static $plural_name = 'Items';
     
     /**
-     * Defines the default sort field and order for this object.
+     * Description of this object.
      *
      * @var string
      * @config
      */
-    private static $default_sort = 'Sort';
+    private static $description = 'A component which represents a navigation bar item';
     
     /**
-     * Maps field names to field types for this object.
+     * Icon file for this object.
      *
-     * @var array
+     * @var string
      * @config
      */
-    private static $db = [
-        'Sort' => 'Int',
-        'Name' => 'Varchar(128)'
-    ];
+    private static $icon = 'silverware-navigation/admin/client/dist/images/icons/BarItem.png';
     
     /**
-     * Defines the has-one associations for this object.
+     * Defines an ancestor class to hide from the admin interface.
      *
-     * @var array
+     * @var string
      * @config
      */
-    private static $has_one = [
-        'Parent' => BarNavigation::class
-    ];
+    private static $hide_ancestor = Component::class;
     
     /**
-     * Defines the summary fields of this object.
+     * Defines the allowed children for this object.
      *
-     * @var array
+     * @var array|string
      * @config
      */
-    private static $summary_fields = [
-        'Type',
-        'Name',
-        'Disabled.Nice'
-    ];
-    
-    /**
-     * Defines the extension classes to apply to this object.
-     *
-     * @var array
-     * @config
-     */
-    private static $extensions = [
-        RenderableExtension::class
-    ];
-    
-    /**
-     * Answers a list of field objects for the CMS interface.
-     *
-     * @return FieldList
-     */
-    public function getCMSFields()
-    {
-        // Obtain Field Objects (from parent):
-        
-        $fields = parent::getCMSFields();
-        
-        // Create Main Fields:
-        
-        if ($this->isInDB()) {
-            
-            $fields->addFieldsToTab(
-                'Root.Main',
-                [
-                    TextField::create(
-                        'Name',
-                        $this->fieldLabel('Name')
-                    )
-                ]
-            );
-            
-        }
-        
-        // Answer Field Objects:
-        
-        return $fields;
-    }
-    
-    /**
-     * Answers a validator for the CMS interface.
-     *
-     * @return RequiredFields
-     */
-    public function getCMSValidator()
-    {
-        return RequiredFields::create([
-            'Name'
-        ]);
-    }
-    
-    /**
-     * Answers the labels for the fields of the receiver.
-     *
-     * @param boolean $includerelations Include labels for relations.
-     *
-     * @return array
-     */
-    public function fieldLabels($includerelations = true)
-    {
-        // Obtain Field Labels (from parent):
-        
-        $labels = parent::fieldLabels($includerelations);
-        
-        // Define Field Labels:
-        
-        $labels['Name'] = _t(__CLASS__ . '.NAME', 'Name');
-        
-        // Answer Field Labels:
-        
-        return $labels;
-    }
-    
-    /**
-     * Answers the title of the receiver for the CMS interface.
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->Name ? $this->Name : parent::getTitle();
-    }
-    
-    /**
-     * Answers the default style ID for the HTML template.
-     *
-     * @return string
-     */
-    public function getDefaultStyleID()
-    {
-        return sprintf(
-            '%s_%s',
-            $this->Parent()->getHTMLID(),
-            $this->getClassNameWithID()
-        );
-    }
+    private static $allowed_children = 'none';
     
     /**
      * Renders the object for the HTML template.

@@ -1,6 +1,6 @@
-/* SilverWare Navigation Admin Bundle
+/* SilverWare Navigation Bundle
 ===================================================================================================================== */
 
-// Import SilverStripe Admin Styles:
+// Load Styles:
 
-@import "~silverstripe-admin/styles/variables";
+require('styles/bundle.scss');

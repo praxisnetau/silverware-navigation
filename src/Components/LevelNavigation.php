@@ -74,6 +74,14 @@ class LevelNavigation extends BaseComponent
     private static $hide_ancestor = BaseComponent::class;
     
     /**
+     * Defines the allowed children for this object.
+     *
+     * @var array|string
+     * @config
+     */
+    private static $allowed_children = 'none';
+    
+    /**
      * Maps field names to field types for this object.
      *
      * @var array
@@ -92,14 +100,6 @@ class LevelNavigation extends BaseComponent
     private static $defaults = [
         'UseLevelTitle' => 0
     ];
-    
-    /**
-     * Defines the allowed children for this object.
-     *
-     * @var array|string
-     * @config
-     */
-    private static $allowed_children = 'none';
     
     /**
      * Defines the extension classes to apply to this object.
@@ -193,7 +193,7 @@ class LevelNavigation extends BaseComponent
      */
     public function getListClassNames()
     {
-        $classes = [];
+        $classes = ['links'];
         
         if ($this->hasFontIcon()) {
             $classes[] = 'fa-ul';

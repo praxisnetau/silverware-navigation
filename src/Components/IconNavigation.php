@@ -17,14 +17,15 @@
 
 namespace SilverWare\Navigation\Components;
 
-use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\DropdownField;
 use SilverWare\Components\BaseComponent;
+use SilverWare\Extensions\Style\CornerStyle;
+use SilverWare\Extensions\Style\LinkColorStyle;
 use SilverWare\Forms\FieldSection;
-use Page;
-use PageController;
+use SilverWare\Model\Link;
 
 /**
- * An extension of the base component class for crumb navigation.
+ * An extension of the base component class for icon navigation.
  *
  * @package SilverWare\Navigation\Components
  * @author Colin Tucker <colin@praxis.net.au>
@@ -32,7 +33,7 @@ use PageController;
  * @license https://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
  * @link https://github.com/praxisnetau/silverware-navigation
  */
-class CrumbNavigation extends BaseComponent
+class IconNavigation extends BaseComponent
 {
     /**
      * Human-readable singular name.
@@ -40,7 +41,7 @@ class CrumbNavigation extends BaseComponent
      * @var string
      * @config
      */
-    private static $singular_name = 'Crumb Navigation';
+    private static $singular_name = 'Icon Navigation';
     
     /**
      * Human-readable plural name.
@@ -48,7 +49,7 @@ class CrumbNavigation extends BaseComponent
      * @var string
      * @config
      */
-    private static $plural_name = 'Crumb Navigation';
+    private static $plural_name = 'Icon Navigation';
     
     /**
      * Description of this object.
@@ -56,7 +57,7 @@ class CrumbNavigation extends BaseComponent
      * @var string
      * @config
      */
-    private static $description = 'A component which shows crumb navigation for the current page';
+    private static $description = 'A component to show navigation as a series of icons';
     
     /**
      * Icon file for this object.
@@ -64,7 +65,7 @@ class CrumbNavigation extends BaseComponent
      * @var string
      * @config
      */
-    private static $icon = 'silverware-navigation/admin/client/dist/images/icons/CrumbNavigation.png';
+    private static $icon = 'silverware-navigation/admin/client/dist/images/icons/IconNavigation.png';
     
     /**
      * Defines an ancestor class to hide from the admin interface.
@@ -75,12 +76,12 @@ class CrumbNavigation extends BaseComponent
     private static $hide_ancestor = BaseComponent::class;
     
     /**
-     * Defines the allowed children for this object.
+     * Defines the default child class for this object.
      *
-     * @var array|string
+     * @var string
      * @config
      */
-    private static $allowed_children = 'none';
+    private static $default_child = Link::class;
     
     /**
      * Maps field names to field types for this object.
@@ -89,7 +90,7 @@ class CrumbNavigation extends BaseComponent
      * @config
      */
     private static $db = [
-        'HideTopLevel' => 'Boolean'
+        'IconSize' => 'Int'
     ];
     
     /**
@@ -99,9 +100,38 @@ class CrumbNavigation extends BaseComponent
      * @config
      */
     private static $defaults = [
-        'HideTitle' => 1,
-        'HideTopLevel' => 1
+        'IconSize' => 32,
+        'HideTitle' => 1
     ];
+    
+    /**
+     * Defines the allowed children for this object.
+     *
+     * @var array|string
+     * @config
+     */
+    private static $allowed_children = [
+        Link::class
+    ];
+    
+    /**
+     * Defines the extension classes to apply to this object.
+     *
+     * @var array
+     * @config
+     */
+    private static $extensions = [
+        CornerStyle::class,
+        LinkColorStyle::class
+    ];
+    
+    /**
+     * Defines the style extension classes to apply to this object.
+     *
+     * @var array
+     * @config
+     */
+    private static $apply_styles = 'none';
     
     /**
      * Answers a list of field objects for the CMS interface.
@@ -114,20 +144,23 @@ class CrumbNavigation extends BaseComponent
         
         $fields = parent::getCMSFields();
         
-        // Create Options Fields:
+        // Create Style Fields:
         
-        $fields->addFieldToTab(
-            'Root.Options',
-            FieldSection::create(
-                'CrumbNavigationOptions',
-                $this->i18n_singular_name(),
-                [
-                    CheckboxField::create(
-                        'HideTopLevel',
-                        $this->fieldLabel('HideTopLevel')
-                    )
-                ]
-            )
+        $fields->addFieldsToTab(
+            'Root.Style',
+            [
+                FieldSection::create(
+                    'IconNavigationStyle',
+                    $this->i18n_singular_name(),
+                    [
+                        DropdownField::create(
+                            'IconSize',
+                            $this->fieldLabel('IconSize'),
+                            Link::singleton()->getIconSizeOptions()
+                        )
+                    ]
+                )
+            ]
         );
         
         // Answer Field Objects:
@@ -150,33 +183,11 @@ class CrumbNavigation extends BaseComponent
         
         // Define Field Labels:
         
-        $labels['HideTopLevel'] = _t(__CLASS__ . '.HIDETOPLEVEL', 'Hide crumbs on top-level pages');
+        $labels['IconSize'] = _t(__CLASS__ . '.ICONSIZEINPIXELS', 'Icon size (in pixels)');
         
         // Answer Field Labels:
         
         return $labels;
-    }
-    
-    /**
-     * Answers the breadcrumb items from the current controller.
-     *
-     * @return ArrayList
-     */
-    public function getCrumbs()
-    {
-        if ($controller = $this->getCurrentController(PageController::class)) {
-            return $controller->getBreadcrumbItems();
-        }
-    }
-    
-    /**
-     * Answers the number of breadcrumb items from the current controller.
-     *
-     * @return integer
-     */
-    public function getCrumbsCount()
-    {
-        return ($crumbs = $this->getCrumbs()) ? $crumbs->count() : 0;
     }
     
     /**
@@ -186,7 +197,7 @@ class CrumbNavigation extends BaseComponent
      */
     public function getWrapperClassNames()
     {
-        $classes = $this->styles('breadcrumb');
+        $classes = ['icon'];
         
         $this->extend('updateWrapperClassNames', $classes);
         
@@ -194,58 +205,48 @@ class CrumbNavigation extends BaseComponent
     }
     
     /**
-     * Answers an array of item class names for the HTML template.
+     * Answers an array of list class names for the HTML template.
      *
      * @return array
      */
-    public function getItemClassNames()
+    public function getListClassNames()
     {
-        $classes = $this->styles('breadcrumb.item');
+        $classes = ['links', 'show-icons', 'hide-text'];
         
-        $this->extend('updateItemClassNames', $classes);
+        $this->extend('updateListClassNames', $classes);
         
         return $classes;
     }
     
     /**
-     * Answers an array of active class names for the HTML template.
+     * Answers the CSS prefix used for the custom CSS template.
      *
-     * @return array
+     * @return string
      */
-    public function getActiveClassNames()
+    public function getCustomCSSPrefix()
     {
-        $classes = $this->styles('breadcrumb.item', 'breadcrumb.active');
-        
-        $this->extend('updateActiveClassNames', $classes);
-        
-        return $classes;
+        return sprintf('%s ul.links > li > a.link', $this->CSSID);
     }
     
     /**
-     * Answers true if the object is disabled within the template.
+     * Answers a list of all links within the receiver.
      *
-     * @return boolean
+     * @return DataList
      */
-    public function isDisabled()
+    public function getLinks()
     {
-        // Obtain Current Page (with crumbs enabled):
-        
-        if (($page = $this->getCurrentPage(Page::class)) && !$page->CrumbsDisabled) {
-            
-            // Disable for Top-Level (if required):
-            
-            if ($this->HideTopLevel && $this->getCrumbsCount() == 1) {
-                return true;
-            }
-            
-            // Answer from Parent:
-            
-            return parent::isDisabled();
-            
-        }
-        
-        // Disable (by default):
-        
-        return true;
+        return $this->AllChildren();
+    }
+    
+    /**
+     * Answers a list of the enabled links within the receiver.
+     *
+     * @return ArrayList
+     */
+    public function getEnabledLinks()
+    {
+        return $this->getLinks()->filterByCallback(function ($link) {
+            return $link->isEnabled();
+        });
     }
 }
