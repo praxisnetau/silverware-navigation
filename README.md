@@ -1,5 +1,9 @@
 # SilverWare Navigation Module
 
+[![Latest Stable Version](https://poser.pugx.org/silverware/navigation/v/stable)](https://packagist.org/packages/silverware/navigation)
+[![Latest Unstable Version](https://poser.pugx.org/silverware/navigation/v/unstable)](https://packagist.org/packages/silverware/navigation)
+[![License](https://poser.pugx.org/silverware/navigation/license)](https://packagist.org/packages/silverware/navigation)
+
 Provides a series of navigation components for use with [SilverWare][silverware].
 
 ## Contents
