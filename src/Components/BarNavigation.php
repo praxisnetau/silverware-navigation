@@ -205,8 +205,8 @@ class BarNavigation extends BaseComponent
         $fields->addFieldToTab(
             'Root.Style',
             FieldSection::create(
-                'BarNavigationStyle',
-                $this->i18n_singular_name(),
+                'NavigationStyle',
+                $this->fieldLabel('NavigationStyle'),
                 [
                     DropdownField::create(
                         'Background',
@@ -237,8 +237,8 @@ class BarNavigation extends BaseComponent
         $fields->addFieldToTab(
             'Root.Options',
             FieldSection::create(
-                'BarNavigationOptions',
-                $this->i18n_singular_name(),
+                'NavigationOptions',
+                $this->fieldLabel('NavigationOptions'),
                 [
                     ViewportField::create(
                         'ToggleOn',
@@ -283,6 +283,7 @@ class BarNavigation extends BaseComponent
         $labels['ButtonLabel'] = _t(__CLASS__ . '.BUTTONLABEL', 'Button label');
         $labels['ButtonAlignment'] = _t(__CLASS__ . '.BUTTONALIGNMENT', 'Button alignment');
         $labels['BrandLinkDisabled'] = _t(__CLASS__ . '.BRANDLINKDISABLED', 'Brand link disabled');
+        $labels['NavigationStyle'] = $labels['NavigationOptions'] = _t(__CLASS__ . '.NAVIGATION', 'Navigation');
         
         // Define Relation Labels:
         

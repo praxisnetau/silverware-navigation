@@ -119,8 +119,8 @@ class CrumbNavigation extends BaseComponent
         $fields->addFieldToTab(
             'Root.Options',
             FieldSection::create(
-                'CrumbNavigationOptions',
-                $this->i18n_singular_name(),
+                'NavigationOptions',
+                $this->fieldLabel('NavigationOptions'),
                 [
                     CheckboxField::create(
                         'HideTopLevel',
@@ -151,6 +151,7 @@ class CrumbNavigation extends BaseComponent
         // Define Field Labels:
         
         $labels['HideTopLevel'] = _t(__CLASS__ . '.HIDETOPLEVEL', 'Hide crumbs on top-level pages');
+        $labels['NavigationOptions'] = _t(__CLASS__ . '.NAVIGATION', 'Navigation');
         
         // Answer Field Labels:
         

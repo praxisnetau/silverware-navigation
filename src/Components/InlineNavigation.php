@@ -191,8 +191,8 @@ class InlineNavigation extends BaseComponent
         $fields->addFieldToTab(
             'Root.Options',
             FieldSection::create(
-                'InlineNavigationOptions',
-                $this->i18n_singular_name(),
+                'NavigationOptions',
+                $this->fieldLabel('NavigationOptions'),
                 [
                     CheckboxField::create(
                         'ShowIcons',
@@ -226,6 +226,7 @@ class InlineNavigation extends BaseComponent
         $labels['LinkMode'] = _t(__CLASS__ . '.LINKMODE', 'Mode');
         $labels['ShowIcons'] = _t(__CLASS__ . '.SHOWICONS', 'Show icons');
         $labels['LinkedPages'] = _t(__CLASS__ . '.LINKEDPAGES', 'Pages');
+        $labels['NavigationOptions'] = _t(__CLASS__ . '.NAVIGATION', 'Navigation');
         
         // Answer Field Labels:
         

@@ -104,8 +104,8 @@ class NavigationItem extends BarItem
             'Root.Options',
             [
                 FieldSection::create(
-                    'NavigationItemOptions',
-                    $this->i18n_singular_name(),
+                    'NavigationOptions',
+                    $this->fieldLabel('NavigationOptions'),
                     [
                         CheckboxField::create(
                             'ShowSubMenus',
@@ -137,6 +137,7 @@ class NavigationItem extends BarItem
         // Define Field Labels:
         
         $labels['ShowSubMenus'] = _t(__CLASS__ . '.SHOWSUBMENUS', 'Show sub-menus');
+        $labels['NavigationOptions'] = _t(__CLASS__ . '.NAVIGATION', 'Navigation');
         
         // Answer Field Labels:
         

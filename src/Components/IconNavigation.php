@@ -150,8 +150,8 @@ class IconNavigation extends BaseComponent
             'Root.Style',
             [
                 FieldSection::create(
-                    'IconNavigationStyle',
-                    $this->i18n_singular_name(),
+                    'NavigationStyle',
+                    $this->fieldLabel('NavigationStyle'),
                     [
                         DropdownField::create(
                             'IconSize',
@@ -184,6 +184,7 @@ class IconNavigation extends BaseComponent
         // Define Field Labels:
         
         $labels['IconSize'] = _t(__CLASS__ . '.ICONSIZEINPIXELS', 'Icon size (in pixels)');
+        $labels['NavigationStyle'] = _t(__CLASS__ . '.NAVIGATION', 'Navigation');
         
         // Answer Field Labels:
         
