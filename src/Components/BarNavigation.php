@@ -49,6 +49,15 @@ class BarNavigation extends BaseComponent
     const BUTTON_ALIGN_RIGHT = 'right';
     
     /**
+     * Define item alignment constants.
+     */
+    const ITEM_ALIGN_START   = 'start';
+    const ITEM_ALIGN_CENTER  = 'center';
+    const ITEM_ALIGN_END     = 'end';
+    const ITEM_ALIGN_BETWEEN = 'between';
+    const ITEM_ALIGN_AROUND  = 'around';
+    
+    /**
      * Define position constants.
      */
     const POSITION_FIXED_TOP    = 'fixed-top';
@@ -121,6 +130,7 @@ class BarNavigation extends BaseComponent
         'ButtonAlignment' => 'Varchar(8)',
         'BrandLinkDisabled' => 'Boolean',
         'BrandLogoResize' => 'Dimensions',
+        'ItemAlignment' => 'Varchar(8)',
         'Position' => 'Varchar(16)',
         'ExpandOn' => 'Varchar(8)'
     ];
@@ -157,6 +167,7 @@ class BarNavigation extends BaseComponent
         'Foreground' => 'light',
         'BrandLinkDisabled' => 0,
         'ButtonAlignment' => 'right',
+        'ItemAlignment' => 'end',
         'ExpandOn' => 'medium',
         'HideTitle' => 1
     ];
@@ -285,6 +296,11 @@ class BarNavigation extends BaseComponent
                         $this->getButtonAlignmentOptions()
                     )->setEmptyString(' ')->setAttribute('data-placeholder', $placeholder),
                     DropdownField::create(
+                        'ItemAlignment',
+                        $this->fieldLabel('ItemAlignment'),
+                        $this->getItemAlignmentOptions()
+                    )->setEmptyString(' ')->setAttribute('data-placeholder', $placeholder),
+                    DropdownField::create(
                         'Position',
                         $this->fieldLabel('Position'),
                         $this->getPositionOptions()
@@ -347,6 +363,7 @@ class BarNavigation extends BaseComponent
         $labels['BrandLinkDisabled'] = _t(__CLASS__ . '.BRANDLINKDISABLED', 'Brand link disabled');
         $labels['BrandLogoResize'] = _t(__CLASS__ . '.DIMENSIONS', 'Dimensions');
         $labels['BrandLogoFile'] = _t(__CLASS__ . '.FILE', 'File');
+        $labels['ItemAlignment'] = _t(__CLASS__ . '.ITEMALIGNMENT', 'Item alignment');
         $labels['NavigationStyle'] = $labels['NavigationOptions'] = _t(__CLASS__ . '.NAVIGATION', 'Navigation');
         
         // Define Relation Labels:
@@ -545,6 +562,10 @@ class BarNavigation extends BaseComponent
     {
         $classes = $this->styles('navbar.collapse', 'collapse');
         
+        if ($align = $this->ItemAlignment) {
+            $classes[] = $this->style(sprintf('navbar.item-align-%s', $align));
+        }
+        
         $this->extend('updateCollapseClassNames', $classes);
         
         return $classes;
@@ -671,6 +692,22 @@ class BarNavigation extends BaseComponent
         return [
             self::BUTTON_ALIGN_LEFT  => _t(__CLASS__ . '.LEFT', 'Left'),
             self::BUTTON_ALIGN_RIGHT => _t(__CLASS__ . '.RIGHT', 'Right')
+        ];
+    }
+    
+    /**
+     * Answers an array of options for the item alignment field.
+     *
+     * @return array
+     */
+    public function getItemAlignmentOptions()
+    {
+        return [
+            self::ITEM_ALIGN_START => _t(__CLASS__ . '.START', 'Start'),
+            self::ITEM_ALIGN_CENTER => _t(__CLASS__ . '.CENTER', 'Center'),
+            self::ITEM_ALIGN_END => _t(__CLASS__ . '.END', 'End'),
+            self::ITEM_ALIGN_BETWEEN => _t(__CLASS__ . '.BETWEEN', 'Between'),
+            self::ITEM_ALIGN_AROUND => _t(__CLASS__ . '.AROUND', 'Around')
         ];
     }
     

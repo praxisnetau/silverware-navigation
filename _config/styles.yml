@@ -31,6 +31,11 @@ SilverWare\Grid\Frameworks\Bootstrap\Framework:
       expand-huge: navbar-expand-xl
       fg-light: navbar-dark
       fg-dark: navbar-light
+      item-align-start: justify-content-start
+      item-align-center: justify-content-center
+      item-align-end: justify-content-end
+      item-align-between: justify-content-between
+      item-align-around:  justify-content-around
       nav: navbar-nav
       nav-item: nav-item
       nav-link: nav-link
