@@ -17,11 +17,14 @@
 
 namespace SilverWare\Navigation\Components;
 
+use SilverStripe\Assets\File;
+use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\Tab;
 use SilverStripe\Forms\TextField;
 use SilverWare\Components\BaseComponent;
+use SilverWare\Forms\DimensionsField;
 use SilverWare\Forms\FieldSection;
 use SilverWare\Forms\PageDropdownField;
 use SilverWare\Forms\ViewportField;
@@ -55,7 +58,8 @@ class BarNavigation extends BaseComponent
      * Define background constants.
      */
     const BG_PRIMARY = 'primary';
-    const BG_INVERSE = 'inverse';
+    const BG_LIGHT   = 'light';
+    const BG_DARK    = 'dark';
     
     /**
      * Define foreground constants.
@@ -116,8 +120,9 @@ class BarNavigation extends BaseComponent
         'ButtonLabel' => 'Varchar(128)',
         'ButtonAlignment' => 'Varchar(8)',
         'BrandLinkDisabled' => 'Boolean',
+        'BrandLogoResize' => 'Dimensions',
         'Position' => 'Varchar(16)',
-        'ToggleOn' => 'Varchar(8)'
+        'ExpandOn' => 'Varchar(8)'
     ];
     
     /**
@@ -127,7 +132,18 @@ class BarNavigation extends BaseComponent
      * @config
      */
     private static $has_one = [
-        'BrandPage' => Page::class
+        'BrandPage' => Page::class,
+        'BrandLogo' => File::class
+    ];
+    
+    /**
+     * Defines the ownership of associations for this object.
+     *
+     * @var array
+     * @config
+     */
+    private static $owns = [
+        'BrandLogo'
     ];
     
     /**
@@ -141,7 +157,7 @@ class BarNavigation extends BaseComponent
         'Foreground' => 'light',
         'BrandLinkDisabled' => 0,
         'ButtonAlignment' => 'right',
-        'ToggleOn' => 'medium',
+        'ExpandOn' => 'medium',
         'HideTitle' => 1
     ];
     
@@ -166,6 +182,14 @@ class BarNavigation extends BaseComponent
     ];
     
     /**
+     * Defines the asset folder for uploading images.
+     *
+     * @var string
+     * @config
+     */
+    private static $asset_folder = 'Logos';
+    
+    /**
      * Answers a list of field objects for the CMS interface.
      *
      * @return FieldList
@@ -182,6 +206,28 @@ class BarNavigation extends BaseComponent
             'Root.Main',
             [
                 TextField::create(
+                    'ButtonLabel',
+                    $this->fieldLabel('ButtonLabel')
+                )
+            ]
+        );
+        
+        // Insert Brand Tab:
+        
+        $fields->insertAfter(
+            Tab::create(
+                'Brand',
+                $this->fieldLabel('Brand')
+            ),
+            'Main'
+        );
+        
+        // Create Brand Fields:
+        
+        $fields->addFieldsToTab(
+            'Root.Brand',
+            [
+                TextField::create(
                     'BrandText',
                     $this->fieldLabel('BrandText')
                 ),
@@ -189,12 +235,27 @@ class BarNavigation extends BaseComponent
                     'BrandPageID',
                     $this->fieldLabel('BrandPageID')
                 ),
-                TextField::create(
-                    'ButtonLabel',
-                    $this->fieldLabel('ButtonLabel')
+                FieldSection::create(
+                    'BrandLogo',
+                    $this->fieldLabel('BrandLogo'),
+                    [
+                        $logo = UploadField::create(
+                            'BrandLogo',
+                            $this->fieldLabel('BrandLogoFile')
+                        ),
+                        DimensionsField::create(
+                            'BrandLogoResize',
+                            $this->owner->fieldLabel('BrandLogoResize')
+                        )
+                    ]
                 )
             ]
         );
+        
+        // Define Logo Field:
+        
+        $logo->setAllowedExtensions(['gif', 'jpg', 'jpeg', 'png', 'svg']);
+        $logo->setFolderName($this->getAssetFolder());
         
         // Define Placeholder:
         
@@ -241,12 +302,12 @@ class BarNavigation extends BaseComponent
                 $this->fieldLabel('NavigationOptions'),
                 [
                     ViewportField::create(
-                        'ToggleOn',
-                        $this->fieldLabel('ToggleOn')
+                        'ExpandOn',
+                        $this->fieldLabel('ExpandOn')
                     )->setRightTitle(
                         _t(
-                            __CLASS__ . '.TOGGLEONRIGHTTITLE',
-                            'Specifies the maximum viewport size to activate toggle.'
+                            __CLASS__ . '.EXPANDONRIGHTTITLE',
+                            'Specifies the viewport size to expand collapsed content.'
                         )
                     ),
                     CheckboxField::create(
@@ -277,23 +338,37 @@ class BarNavigation extends BaseComponent
         
         // Define Field Labels:
         
-        $labels['ToggleOn'] = _t(__CLASS__ . '.TOGGLEON', 'Toggle on');
-        $labels['BrandText'] = _t(__CLASS__ . '.BRANDTEXT', 'Brand text');
-        $labels['BrandPageID'] = _t(__CLASS__ . '.BRANDPAGE', 'Brand page');
+        $labels['Brand'] = _t(__CLASS__ . '.BRAND', 'Brand');
+        $labels['ExpandOn'] = _t(__CLASS__ . '.EXPANDON', 'Expand on');
+        $labels['BrandText'] = _t(__CLASS__ . '.BRANDTEXT', 'Text');
+        $labels['BrandPageID'] = _t(__CLASS__ . '.BRANDPAGE', 'Page');
         $labels['ButtonLabel'] = _t(__CLASS__ . '.BUTTONLABEL', 'Button label');
         $labels['ButtonAlignment'] = _t(__CLASS__ . '.BUTTONALIGNMENT', 'Button alignment');
         $labels['BrandLinkDisabled'] = _t(__CLASS__ . '.BRANDLINKDISABLED', 'Brand link disabled');
+        $labels['BrandLogoResize'] = _t(__CLASS__ . '.DIMENSIONS', 'Dimensions');
+        $labels['BrandLogoFile'] = _t(__CLASS__ . '.FILE', 'File');
         $labels['NavigationStyle'] = $labels['NavigationOptions'] = _t(__CLASS__ . '.NAVIGATION', 'Navigation');
         
         // Define Relation Labels:
         
         if ($includerelations) {
-            $labels['BrandPage'] = _t(__CLASS__ . '.has_one_BrandPage', 'Brand Page');
+            $labels['BrandPage'] = _t(__CLASS__ . '.has_one_BrandPage', 'Page');
+            $labels['BrandLogo'] = _t(__CLASS__ . '.has_one_BrandLogo', 'Logo');
         }
         
         // Answer Field Labels:
         
         return $labels;
+    }
+    
+    /**
+     * Answers the asset folder used by the receiver.
+     *
+     * @return string
+     */
+    public function getAssetFolder()
+    {
+        return $this->config()->asset_folder;
     }
     
     /**
@@ -321,7 +396,7 @@ class BarNavigation extends BaseComponent
     {
         $classes = $this->styles('navbar');
         
-        $classes[] = $this->style('navbar', sprintf('toggleable-%s', $this->ToggleOn));
+        $classes[] = $this->style('navbar', sprintf('expand-%s', $this->ExpandOn));
         
         if ($this->Background) {
             $classes[] = $this->style('background', $this->Background);
@@ -348,10 +423,6 @@ class BarNavigation extends BaseComponent
     public function getButtonClassNames()
     {
         $classes = $this->styles('navbar.button');
-        
-        if ($this->ButtonAlignment) {
-            $classes[] = $this->style('navbar', sprintf('button-%s', $this->ButtonAlignment));
-        }
         
         $this->extend('updateButtonClassNames', $classes);
         
@@ -415,6 +486,20 @@ class BarNavigation extends BaseComponent
         $classes = $this->styles('navbar.brand');
         
         $this->extend('updateBrandClassNames', $classes);
+        
+        return $classes;
+    }
+    
+    /**
+     * Answers an array of brand logo class names for the HTML template.
+     *
+     * @return array
+     */
+    public function getBrandLogoClassNames()
+    {
+        $classes = $this->styles('navbar.brand-logo', 'image.fluid');
+        
+        $this->extend('updateBrandLogoClassNames', $classes);
         
         return $classes;
     }
@@ -520,6 +605,36 @@ class BarNavigation extends BaseComponent
     }
     
     /**
+     * Answers true if a brand logo exists.
+     *
+     * @return boolean
+     */
+    public function hasBrandLogo()
+    {
+        return $this->BrandLogo()->exists();
+    }
+    
+    /**
+     * Answers true if the button is left-aligned.
+     *
+     * @return boolean
+     */
+    public function isButtonLeftAligned()
+    {
+        return ($this->ButtonAlignment == self::BUTTON_ALIGN_LEFT || !$this->ButtonAlignment);
+    }
+    
+    /**
+     * Answers true if the button is right-aligned.
+     *
+     * @return boolean
+     */
+    public function isButtonRightAligned()
+    {
+        return ($this->ButtonAlignment == self::BUTTON_ALIGN_RIGHT);
+    }
+    
+    /**
      * Answers an array of options for the background field.
      *
      * @return array
@@ -528,7 +643,8 @@ class BarNavigation extends BaseComponent
     {
         return [
             self::BG_PRIMARY => _t(__CLASS__ . '.PRIMARY', 'Primary'),
-            self::BG_INVERSE => _t(__CLASS__ . '.INVERSE', 'Inverse')
+            self::BG_LIGHT => _t(__CLASS__ . '.LIGHT', 'Light'),
+            self::BG_DARK => _t(__CLASS__ . '.DARK', 'Dark')
         ];
     }
     
