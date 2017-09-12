@@ -1,0 +1,30 @@
+/* Level Navigation Styles
+===================================================================================================================== */
+
+.levelnavigation {
+  
+  ul.links {
+    
+    margin-bottom: 0;
+    
+    > li {
+      
+      i.fa {
+        top: 0;
+        color: $gray-700;
+        line-height: $line-height-base;
+      }
+      
+      a {
+        color: inherit;
+      }
+      
+      span.count {
+        color: $gray-600;
+      }
+      
+    }
+    
+  }
+  
+}

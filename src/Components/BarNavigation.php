@@ -23,11 +23,14 @@ use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\Tab;
 use SilverStripe\Forms\TextField;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\View\ArrayData;
 use SilverWare\Components\BaseComponent;
 use SilverWare\Forms\DimensionsField;
 use SilverWare\Forms\FieldSection;
 use SilverWare\Forms\PageDropdownField;
 use SilverWare\Forms\ViewportField;
+use SilverWare\Forms\ViewportsField;
 use SilverWare\Navigation\Model\BarItem;
 use Page;
 
@@ -129,7 +132,8 @@ class BarNavigation extends BaseComponent
         'ButtonLabel' => 'Varchar(128)',
         'ButtonAlignment' => 'Varchar(8)',
         'BrandLinkDisabled' => 'Boolean',
-        'BrandLogoResize' => 'Dimensions',
+        'BrandLogoWidth' => 'Viewports',
+        'BrandLogoHeight' => 'Viewports',
         'ItemAlignment' => 'Varchar(8)',
         'Position' => 'Varchar(16)',
         'ExpandOn' => 'Varchar(8)'
@@ -254,10 +258,14 @@ class BarNavigation extends BaseComponent
                             'BrandLogo',
                             $this->fieldLabel('BrandLogoFile')
                         ),
-                        DimensionsField::create(
-                            'BrandLogoResize',
-                            $this->owner->fieldLabel('BrandLogoResize')
-                        )
+                        ViewportsField::create(
+                            'BrandLogoWidth',
+                            $this->fieldLabel('BrandLogoWidth')
+                        )->setUseTextInput(true),
+                        ViewportsField::create(
+                            'BrandLogoHeight',
+                            $this->fieldLabel('BrandLogoHeight')
+                        )->setUseTextInput(true)
                     ]
                 )
             ]
@@ -361,8 +369,9 @@ class BarNavigation extends BaseComponent
         $labels['ButtonLabel'] = _t(__CLASS__ . '.BUTTONLABEL', 'Button label');
         $labels['ButtonAlignment'] = _t(__CLASS__ . '.BUTTONALIGNMENT', 'Button alignment');
         $labels['BrandLinkDisabled'] = _t(__CLASS__ . '.BRANDLINKDISABLED', 'Brand link disabled');
-        $labels['BrandLogoResize'] = _t(__CLASS__ . '.DIMENSIONS', 'Dimensions');
         $labels['BrandLogoFile'] = _t(__CLASS__ . '.FILE', 'File');
+        $labels['BrandLogoWidth'] = _t(__CLASS__ . '.WIDTH', 'Width');
+        $labels['BrandLogoHeight'] = _t(__CLASS__ . '.HEIGHT', 'Height');
         $labels['ItemAlignment'] = _t(__CLASS__ . '.ITEMALIGNMENT', 'Item alignment');
         $labels['NavigationStyle'] = $labels['NavigationOptions'] = _t(__CLASS__ . '.NAVIGATION', 'Navigation');
         
@@ -653,6 +662,59 @@ class BarNavigation extends BaseComponent
     public function isButtonRightAligned()
     {
         return ($this->ButtonAlignment == self::BUTTON_ALIGN_RIGHT);
+    }
+    
+    /**
+     * Answers a list of logo dimensions for the custom CSS template.
+     *
+     * @return ArrayList
+     */
+    public function getLogoDimensions()
+    {
+        // Initialise:
+        
+        $data = [];
+        
+        // Obtain Dimensions:
+        
+        $widths  = $this->dbObject('BrandLogoWidth');
+        $heights = $this->dbObject('BrandLogoHeight');
+        
+        // Iterate Width Viewports:
+        
+        foreach ($widths->getViewports() as $viewport) {
+            
+            if ($value = $widths->getField($viewport)) {
+                $data[$viewport]['Width'] = $value;
+                $data[$viewport]['Breakpoint'] = $widths->getBreakpoint($viewport);
+            }
+            
+        }
+        
+        // Iterate Height Viewports:
+        
+        foreach ($heights->getViewports() as $viewport) {
+            
+            if ($value = $heights->getField($viewport)) {
+                $data[$viewport]['Height'] = $value;
+                $data[$viewport]['Breakpoint'] = $heights->getBreakpoint($viewport);
+            }
+            
+        }
+        
+        // Create Items List:
+        
+        $items = ArrayList::create();
+        
+        // Create Data Items:
+        
+        foreach ($data as $item) {
+            $items->push(ArrayData::create($item));
+        }
+        
+        // Answer Items List:
+        
+        return $items;
     }
     
     /**

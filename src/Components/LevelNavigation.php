@@ -18,8 +18,10 @@
 namespace SilverWare\Navigation\Components;
 
 use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\DropdownField;
 use SilverWare\Components\BaseComponent;
 use SilverWare\FontIcons\Extensions\FontIconExtension;
+use SilverWare\Forms\FieldSection;
 use Page;
 
 /**
@@ -33,6 +35,12 @@ use Page;
  */
 class LevelNavigation extends BaseComponent
 {
+    /**
+     * Define constants.
+     */
+    const SORT_ORDER = 'order';
+    const SORT_TITLE = 'title';
+    
     /**
      * Human-readable singular name.
      *
@@ -88,6 +96,8 @@ class LevelNavigation extends BaseComponent
      * @config
      */
     private static $db = [
+        'SortBy' => 'Varchar(16)',
+        'ShowCount' => 'Boolean',
         'UseLevelTitle' => 'Boolean'
     ];
     
@@ -98,6 +108,8 @@ class LevelNavigation extends BaseComponent
      * @config
      */
     private static $defaults = [
+        'SortBy' => 'order',
+        'ShowCount' => 0,
         'UseLevelTitle' => 0
     ];
     
@@ -131,6 +143,27 @@ class LevelNavigation extends BaseComponent
             )
         );
         
+        // Create Options Fields:
+        
+        $fields->addFieldToTab(
+            'Root.Options',
+            FieldSection::create(
+                'NavigationOptions',
+                $this->fieldLabel('NavigationOptions'),
+                [
+                    DropdownField::create(
+                        'SortBy',
+                        $this->fieldLabel('SortBy'),
+                        $this->getSortByOptions()
+                    ),
+                    CheckboxField::create(
+                        'ShowCount',
+                        $this->fieldLabel('ShowCount')
+                    )
+                ]
+            )
+        );
+        
         // Answer Field Objects:
         
         return $fields;
@@ -151,7 +184,10 @@ class LevelNavigation extends BaseComponent
         
         // Define Field Labels:
         
+        $labels['SortBy'] = _t(__CLASS__ . '.SORTBY', 'Sort by');
+        $labels['ShowCount'] = _t(__CLASS__ . '.SHOWNUMBEROFCHILDREN', 'Show number of children in each section');
         $labels['UseLevelTitle'] = _t(__CLASS__ . '.USELEVELTITLE', 'Use title of current level for component title');
+        $labels['NavigationOptions'] = _t(__CLASS__ . '.NAVIGATION', 'Navigation');
         
         // Answer Field Labels:
         
@@ -246,7 +282,7 @@ class LevelNavigation extends BaseComponent
     public function getCurrentLevel()
     {
         if ($level = $this->getLevel()) {
-            return $level->Children();
+            return $level->Children()->sort($this->getSortOrder());
         }
     }
     
@@ -266,5 +302,36 @@ class LevelNavigation extends BaseComponent
         }
         
         return true;
+    }
+    
+    /**
+     * Answers the sort order for the level navigation.
+     *
+     * @return string
+     */
+    public function getSortOrder()
+    {
+        switch ($this->SortBy) {
+            
+            case self::SORT_TITLE:
+                return 'Title';
+            
+            default:
+                return 'Sort';
+            
+        }
+    }
+    
+    /**
+     * Answers an array of options for the sort by field.
+     *
+     * @return array
+     */
+    public function getSortByOptions()
+    {
+        return [
+            self::SORT_ORDER => _t(__CLASS__ . '.ORDER', 'Order'),
+            self::SORT_TITLE => _t(__CLASS__ . '.TITLE', 'Title')
+        ];
     }
 }

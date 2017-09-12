@@ -18,6 +18,7 @@
 namespace SilverWare\Navigation\Components;
 
 use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\NumericField;
 use SilverWare\Components\BaseComponent;
 use SilverWare\Extensions\Style\CornerStyle;
 use SilverWare\Extensions\Style\LinkColorStyle;
@@ -90,7 +91,8 @@ class IconNavigation extends BaseComponent
      * @config
      */
     private static $db = [
-        'IconSize' => 'Int'
+        'IconSize' => 'Int',
+        'IconMargin' => 'Int'
     ];
     
     /**
@@ -101,7 +103,8 @@ class IconNavigation extends BaseComponent
      */
     private static $defaults = [
         'IconSize' => 32,
-        'HideTitle' => 1
+        'HideTitle' => 1,
+        'IconMargin' => 5
     ];
     
     /**
@@ -157,6 +160,10 @@ class IconNavigation extends BaseComponent
                             'IconSize',
                             $this->fieldLabel('IconSize'),
                             Link::singleton()->getIconSizeOptions()
+                        ),
+                        NumericField::create(
+                            'IconMargin',
+                            $this->fieldLabel('IconMargin')
                         )
                     ]
                 )
@@ -184,6 +191,7 @@ class IconNavigation extends BaseComponent
         // Define Field Labels:
         
         $labels['IconSize'] = _t(__CLASS__ . '.ICONSIZEINPIXELS', 'Icon size (in pixels)');
+        $labels['IconMargin'] = _t(__CLASS__ . '.ICONMARGININPIXELS', 'Icon margin (in pixels)');
         $labels['NavigationStyle'] = _t(__CLASS__ . '.NAVIGATION', 'Navigation');
         
         // Answer Field Labels:
