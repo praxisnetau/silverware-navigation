@@ -270,7 +270,7 @@ class InlineNavigation extends BaseComponent
      */
     public function getLinks()
     {
-        return $this->AllChildren();
+        return $this->getAllChildren();
     }
     
     /**

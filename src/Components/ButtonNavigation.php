@@ -17,16 +17,14 @@
 
 namespace SilverWare\Navigation\Components;
 
-use SilverStripe\Forms\DropdownField;
-use SilverStripe\Forms\NumericField;
+use SilverStripe\Forms\TextField;
 use SilverWare\Components\BaseComponent;
-use SilverWare\Extensions\Style\CornerStyle;
-use SilverWare\Extensions\Style\LinkColorStyle;
+use SilverWare\Extensions\Style\AlignmentStyle;
 use SilverWare\Forms\FieldSection;
-use SilverWare\Model\Link;
+use SilverWare\Model\Button;
 
 /**
- * An extension of the base component class for icon navigation.
+ * An extension of the base component class for button navigation.
  *
  * @package SilverWare\Navigation\Components
  * @author Colin Tucker <colin@praxis.net.au>
@@ -34,7 +32,7 @@ use SilverWare\Model\Link;
  * @license https://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
  * @link https://github.com/praxisnetau/silverware-navigation
  */
-class IconNavigation extends BaseComponent
+class ButtonNavigation extends BaseComponent
 {
     /**
      * Human-readable singular name.
@@ -42,7 +40,7 @@ class IconNavigation extends BaseComponent
      * @var string
      * @config
      */
-    private static $singular_name = 'Icon Navigation';
+    private static $singular_name = 'Button Navigation';
     
     /**
      * Human-readable plural name.
@@ -50,7 +48,7 @@ class IconNavigation extends BaseComponent
      * @var string
      * @config
      */
-    private static $plural_name = 'Icon Navigation';
+    private static $plural_name = 'Button Navigation';
     
     /**
      * Description of this object.
@@ -58,7 +56,7 @@ class IconNavigation extends BaseComponent
      * @var string
      * @config
      */
-    private static $description = 'A component to show navigation as a series of icons';
+    private static $description = 'A component to show navigation as a series of buttons';
     
     /**
      * Icon file for this object.
@@ -66,15 +64,7 @@ class IconNavigation extends BaseComponent
      * @var string
      * @config
      */
-    private static $icon = 'silverware-navigation/admin/client/dist/images/icons/IconNavigation.png';
-    
-    /**
-     * Defines an ancestor class to hide from the admin interface.
-     *
-     * @var string
-     * @config
-     */
-    private static $hide_ancestor = BaseComponent::class;
+    private static $icon = 'silverware-navigation/admin/client/dist/images/icons/ButtonNavigation.png';
     
     /**
      * Defines the default child class for this object.
@@ -82,7 +72,7 @@ class IconNavigation extends BaseComponent
      * @var string
      * @config
      */
-    private static $default_child = Link::class;
+    private static $default_child = Button::class;
     
     /**
      * Maps field names to field types for this object.
@@ -91,8 +81,9 @@ class IconNavigation extends BaseComponent
      * @config
      */
     private static $db = [
-        'IconSize' => 'Int',
-        'IconMargin' => 'Int'
+        'ButtonMargin' => 'AbsoluteInt',
+        'ButtonPaddingX' => 'AbsoluteInt',
+        'ButtonPaddingY' => 'AbsoluteInt'
     ];
     
     /**
@@ -102,9 +93,8 @@ class IconNavigation extends BaseComponent
      * @config
      */
     private static $defaults = [
-        'IconSize' => 32,
         'HideTitle' => 1,
-        'IconMargin' => 5
+        'ButtonMargin' => 10
     ];
     
     /**
@@ -114,7 +104,7 @@ class IconNavigation extends BaseComponent
      * @config
      */
     private static $allowed_children = [
-        Link::class
+        Button::class
     ];
     
     /**
@@ -124,17 +114,8 @@ class IconNavigation extends BaseComponent
      * @config
      */
     private static $extensions = [
-        CornerStyle::class,
-        LinkColorStyle::class
+        AlignmentStyle::class
     ];
-    
-    /**
-     * Defines the style extension classes to apply to this object.
-     *
-     * @var array
-     * @config
-     */
-    private static $apply_styles = 'none';
     
     /**
      * Answers a list of field objects for the CMS interface.
@@ -156,14 +137,17 @@ class IconNavigation extends BaseComponent
                     'NavigationStyle',
                     $this->fieldLabel('NavigationStyle'),
                     [
-                        DropdownField::create(
-                            'IconSize',
-                            $this->fieldLabel('IconSize'),
-                            Link::singleton()->getIconSizeOptions()
+                        TextField::create(
+                            'ButtonMargin',
+                            $this->fieldLabel('ButtonMargin')
                         ),
-                        NumericField::create(
-                            'IconMargin',
-                            $this->fieldLabel('IconMargin')
+                        TextField::create(
+                            'ButtonPaddingX',
+                            $this->fieldLabel('ButtonPaddingX')
+                        ),
+                        TextField::create(
+                            'ButtonPaddingY',
+                            $this->fieldLabel('ButtonPaddingY')
                         )
                     ]
                 )
@@ -190,8 +174,9 @@ class IconNavigation extends BaseComponent
         
         // Define Field Labels:
         
-        $labels['IconSize'] = _t(__CLASS__ . '.ICONSIZEINPIXELS', 'Icon size (in pixels)');
-        $labels['IconMargin'] = _t(__CLASS__ . '.ICONMARGININPIXELS', 'Icon margin (in pixels)');
+        $labels['ButtonMargin'] = _t(__CLASS__ . '.BUTTONMARGININPIXELS', 'Button margin (in pixels)');
+        $labels['ButtonPaddingX'] = _t(__CLASS__ . '.BUTTONPADDINGXINPIXELS', 'Button padding (x-axis, in pixels)');
+        $labels['ButtonPaddingY'] = _t(__CLASS__ . '.BUTTONPADDINGYINPIXELS', 'Button padding (y-axis, in pixels)');
         $labels['NavigationStyle'] = _t(__CLASS__ . '.NAVIGATION', 'Navigation');
         
         // Answer Field Labels:
@@ -206,7 +191,7 @@ class IconNavigation extends BaseComponent
      */
     public function getWrapperClassNames()
     {
-        $classes = ['icon'];
+        $classes = ['button'];
         
         $this->extend('updateWrapperClassNames', $classes);
         
@@ -220,7 +205,7 @@ class IconNavigation extends BaseComponent
      */
     public function getListClassNames()
     {
-        $classes = ['links', 'show-icons', 'hide-text'];
+        $classes = ['buttons'];
         
         $this->extend('updateListClassNames', $classes);
         
@@ -234,28 +219,28 @@ class IconNavigation extends BaseComponent
      */
     public function getCustomCSSPrefix()
     {
-        return sprintf('%s ul.links > li > a.link', $this->CSSID);
+        return sprintf('%s ul.buttons > li > a.button', $this->CSSID);
     }
     
     /**
-     * Answers a list of all links within the receiver.
+     * Answers a list of all buttons within the receiver.
      *
      * @return DataList
      */
-    public function getLinks()
+    public function getButtons()
     {
         return $this->getAllChildren();
     }
     
     /**
-     * Answers a list of the enabled links within the receiver.
+     * Answers a list of the enabled buttons within the receiver.
      *
      * @return ArrayList
      */
-    public function getEnabledLinks()
+    public function getEnabledButtons()
     {
-        return $this->getLinks()->filterByCallback(function ($link) {
-            return $link->isEnabled();
+        return $this->getButtons()->filterByCallback(function ($button) {
+            return $button->isEnabled();
         });
     }
 }

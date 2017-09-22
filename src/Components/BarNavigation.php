@@ -607,7 +607,7 @@ class BarNavigation extends BaseComponent
      */
     public function getItems()
     {
-        return $this->AllChildren();
+        return $this->getAllChildren();
     }
     
     /**
