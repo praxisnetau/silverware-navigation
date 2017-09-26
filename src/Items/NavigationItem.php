@@ -244,7 +244,7 @@ class NavigationItem extends BarItem
     public function getMenu($level = 1)
     {
         if ($controller = $this->getCurrentController(PageController::class)) {
-            return $controller->getMenu($level);
+            return $controller->getMenu($level)->exclude('HideFromMainMenu', 1);
         }
     }
     

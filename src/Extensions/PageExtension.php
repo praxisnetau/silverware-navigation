@@ -42,7 +42,8 @@ class PageExtension extends DataExtension
      * @config
      */
     private static $db = [
-        'CrumbsDisabled' => 'Boolean'
+        'CrumbsDisabled' => 'Boolean',
+        'HideFromMainMenu' => 'Boolean'
     ];
     
     /**
@@ -52,7 +53,8 @@ class PageExtension extends DataExtension
      * @config
      */
     private static $defaults = [
-        'CrumbsDisabled' => 0
+        'CrumbsDisabled' => 0,
+        'HideFromMainMenu' => 0
     ];
     
     /**
@@ -85,6 +87,10 @@ class PageExtension extends DataExtension
                     CheckboxField::create(
                         'CrumbsDisabled',
                         $this->owner->fieldLabel('CrumbsDisabled')
+                    ),
+                    CheckboxField::create(
+                        'HideFromMainMenu',
+                        $this->owner->fieldLabel('HideFromMainMenu')
                     )
                 ]
             )
@@ -111,6 +117,17 @@ class PageExtension extends DataExtension
     public function updateFieldLabels(&$labels)
     {
         $labels['CrumbsDisabled'] = _t(__CLASS__ . '.CRUMBSDISABLED', 'Crumbs disabled');
+        $labels['HideFromMainMenu'] = _t(__CLASS__ . '.HIDEFROMMAINMENU', 'Hide from main menu');
         $labels['NavigationSettings'] = _t(__CLASS__ . '.NAVIGATION', 'Navigation');
+    }
+    
+    /**
+     * Answers the children of the extended object which are to be shown in the main menu.
+     *
+     * @return ArrayList
+     */
+    public function getMainMenuChildren()
+    {
+        return $this->owner->Children()->exclude('HideFromMainMenu', 1);
     }
 }
