@@ -20,6 +20,7 @@ namespace SilverWare\Navigation\Components;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\NumericField;
 use SilverWare\Components\BaseComponent;
+use SilverWare\Extensions\Style\AlignmentStyle;
 use SilverWare\Extensions\Style\CornerStyle;
 use SilverWare\Extensions\Style\LinkColorStyle;
 use SilverWare\Forms\FieldSection;
@@ -66,7 +67,7 @@ class IconNavigation extends BaseComponent
      * @var string
      * @config
      */
-    private static $icon = 'silverware-navigation/admin/client/dist/images/icons/IconNavigation.png';
+    private static $icon = 'silverware/navigation: admin/client/dist/images/icons/IconNavigation.png';
     
     /**
      * Defines an ancestor class to hide from the admin interface.
@@ -124,6 +125,7 @@ class IconNavigation extends BaseComponent
      * @config
      */
     private static $extensions = [
+        AlignmentStyle::class,
         CornerStyle::class,
         LinkColorStyle::class
     ];
@@ -134,7 +136,9 @@ class IconNavigation extends BaseComponent
      * @var array
      * @config
      */
-    private static $apply_styles = 'none';
+    private static $apply_styles = [
+        AlignmentStyle::class
+    ];
     
     /**
      * Answers a list of field objects for the CMS interface.

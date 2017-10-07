@@ -60,7 +60,7 @@ class BarItem extends Component
      * @var string
      * @config
      */
-    private static $icon = 'silverware-navigation/admin/client/dist/images/icons/BarItem.png';
+    private static $icon = 'silverware/navigation: admin/client/dist/images/icons/BarItem.png';
     
     /**
      * Defines an ancestor class to hide from the admin interface.

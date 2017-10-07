@@ -1,7 +1,7 @@
-/* Inline Navigation Styles
+/* Block Navigation Styles
 ===================================================================================================================== */
 
-.inlinenavigation {
+.blocknavigation {
   
   ul.links {
     
@@ -12,21 +12,9 @@
     
     > li {
       
-      margin: 0 $spacer-half;
-      display: inline-block;
-      
-      &:first-child {
-        margin-left: 0;
-      }
-      
-      &:last-child {
-        margin-right: 0;
-      }
-      
       > a {
         
         color: inherit;
-        display: inline-block;
         font-size: $font-size-base;
         
         &:hover,
