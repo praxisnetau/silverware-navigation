@@ -12,14 +12,14 @@ Page:
 
 SilverStripe\CMS\Controllers\ContentController:
   required_js:
-    - silverware-navigation/client/dist/js/bundle.js
+    - "silverware/navigation: client/dist/js/bundle.js"
   required_css:
-    - silverware-navigation/client/dist/styles/bundle.css
+    - "silverware/navigation: client/dist/styles/bundle.css"
 
 # Configure Admin Requirements:
 
 SilverStripe\Admin\LeftAndMain:
   extra_requirements_css:
-    - silverware-navigation/admin/client/dist/styles/bundle.css
+    - "silverware/navigation: admin/client/dist/styles/bundle.css"
   extra_requirements_javascript:
-    - silverware-navigation/admin/client/dist/js/bundle.js
+    - "silverware/navigation: admin/client/dist/js/bundle.js"

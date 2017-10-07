@@ -64,7 +64,7 @@ class ButtonNavigation extends BaseComponent
      * @var string
      * @config
      */
-    private static $icon = 'silverware-navigation/admin/client/dist/images/icons/ButtonNavigation.png';
+    private static $icon = 'silverware/navigation: admin/client/dist/images/icons/ButtonNavigation.png';
     
     /**
      * Defines the default child class for this object.

@@ -28,7 +28,7 @@ use SilverWare\Navigation\Model\LinkHolder;
  * @license https://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
  * @link https://github.com/praxisnetau/silverware-navigation
  */
-class InlineNavigation extends LinkHolder
+class BlockNavigation extends LinkHolder
 {
     /**
      * Human-readable singular name.
@@ -36,7 +36,7 @@ class InlineNavigation extends LinkHolder
      * @var string
      * @config
      */
-    private static $singular_name = 'Inline Navigation';
+    private static $singular_name = 'Block Navigation';
     
     /**
      * Human-readable plural name.
@@ -44,7 +44,7 @@ class InlineNavigation extends LinkHolder
      * @var string
      * @config
      */
-    private static $plural_name = 'Inline Navigation';
+    private static $plural_name = 'Block Navigation';
     
     /**
      * Description of this object.
@@ -52,7 +52,7 @@ class InlineNavigation extends LinkHolder
      * @var string
      * @config
      */
-    private static $description = 'A component which shows a series of inline links';
+    private static $description = 'A component which shows a series of links in a block';
     
     /**
      * Icon file for this object.
@@ -60,7 +60,7 @@ class InlineNavigation extends LinkHolder
      * @var string
      * @config
      */
-    private static $icon = 'silverware/navigation: admin/client/dist/images/icons/InlineNavigation.png';
+    private static $icon = 'silverware/navigation: admin/client/dist/images/icons/BlockNavigation.png';
     
     /**
      * Defines an ancestor class to hide from the admin interface.

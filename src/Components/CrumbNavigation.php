@@ -64,7 +64,7 @@ class CrumbNavigation extends BaseComponent
      * @var string
      * @config
      */
-    private static $icon = 'silverware-navigation/admin/client/dist/images/icons/CrumbNavigation.png';
+    private static $icon = 'silverware/navigation: admin/client/dist/images/icons/CrumbNavigation.png';
     
     /**
      * Defines an ancestor class to hide from the admin interface.

@@ -8,35 +8,46 @@
  * For full copyright and license information, please view the
  * LICENSE.md file that was distributed with this source code.
  *
- * @package SilverWare\Navigation\Components
+ * @package SilverWare\Navigation\Model
  * @author Colin Tucker <colin@praxis.net.au>
  * @copyright 2017 Praxis Interactive
  * @license https://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
  * @link https://github.com/praxisnetau/silverware-navigation
  */
 
-namespace SilverWare\Navigation\Components;
+namespace SilverWare\Navigation\Model;
 
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\Tab;
+use SilverStripe\ORM\ArrayList;
 use SilverWare\Components\BaseComponent;
+use SilverWare\Extensions\Style\AlignmentStyle;
 use SilverWare\FontIcons\Extensions\FontIconExtension;
 use SilverWare\Forms\FieldSection;
+use SilverWare\Forms\PageMultiselectField;
+use SilverWare\Model\Link;
 use Page;
 
 /**
- * An extension of the base component class for level navigation.
+ * An extension of the base component class for a link holder.
  *
- * @package SilverWare\Navigation\Components
+ * @package SilverWare\Navigation\Model
  * @author Colin Tucker <colin@praxis.net.au>
  * @copyright 2017 Praxis Interactive
  * @license https://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
  * @link https://github.com/praxisnetau/silverware-navigation
  */
-class LevelNavigation extends BaseComponent
+class LinkHolder extends BaseComponent
 {
     /**
-     * Define constants.
+     * Define mode constants.
+     */
+    const MODE_LINKS = 'links';
+    const MODE_PAGES = 'pages';
+    
+    /**
+     * Define sort constants.
      */
     const SORT_ORDER = 'order';
     const SORT_TITLE = 'title';
@@ -47,7 +58,7 @@ class LevelNavigation extends BaseComponent
      * @var string
      * @config
      */
-    private static $singular_name = 'Level Navigation';
+    private static $singular_name = 'Link Holder';
     
     /**
      * Human-readable plural name.
@@ -55,7 +66,7 @@ class LevelNavigation extends BaseComponent
      * @var string
      * @config
      */
-    private static $plural_name = 'Level Navigation';
+    private static $plural_name = 'Link Holders';
     
     /**
      * Description of this object.
@@ -63,15 +74,7 @@ class LevelNavigation extends BaseComponent
      * @var string
      * @config
      */
-    private static $description = 'A component which shows navigation for the current page level';
-    
-    /**
-     * Icon file for this object.
-     *
-     * @var string
-     * @config
-     */
-    private static $icon = 'silverware/navigation: admin/client/dist/images/icons/LevelNavigation.png';
+    private static $description = 'A component which holds a series of links';
     
     /**
      * Defines an ancestor class to hide from the admin interface.
@@ -82,12 +85,12 @@ class LevelNavigation extends BaseComponent
     private static $hide_ancestor = BaseComponent::class;
     
     /**
-     * Defines the allowed children for this object.
+     * Defines the default child class for this object.
      *
-     * @var array|string
+     * @var string
      * @config
      */
-    private static $allowed_children = 'none';
+    private static $default_child = Link::class;
     
     /**
      * Maps field names to field types for this object.
@@ -96,9 +99,19 @@ class LevelNavigation extends BaseComponent
      * @config
      */
     private static $db = [
+        'LinkMode' => 'Varchar(8)',
         'SortBy' => 'Varchar(16)',
-        'ShowCount' => 'Boolean',
-        'UseLevelTitle' => 'Boolean'
+        'ShowIcons' => 'Boolean'
+    ];
+    
+    /**
+     * Defines the many-many associations for this object.
+     *
+     * @var array
+     * @config
+     */
+    private static $many_many = [
+        'LinkedPages' => Page::class
     ];
     
     /**
@@ -108,9 +121,20 @@ class LevelNavigation extends BaseComponent
      * @config
      */
     private static $defaults = [
+        'LinkMode' => 'links',
         'SortBy' => 'order',
-        'ShowCount' => 0,
-        'UseLevelTitle' => 0
+        'HideTitle' => 1,
+        'ShowIcons' => 1
+    ];
+    
+    /**
+     * Defines the allowed children for this object.
+     *
+     * @var array|string
+     * @config
+     */
+    private static $allowed_children = [
+        Link::class
     ];
     
     /**
@@ -120,6 +144,7 @@ class LevelNavigation extends BaseComponent
      * @config
      */
     private static $extensions = [
+        AlignmentStyle::class,
         FontIconExtension::class
     ];
     
@@ -134,13 +159,31 @@ class LevelNavigation extends BaseComponent
         
         $fields = parent::getCMSFields();
         
-        // Create Field Objects:
+        // Insert Links Tab:
         
-        $fields->fieldByName('Root.Options.TitleOptions')->push(
-            CheckboxField::create(
-                'UseLevelTitle',
-                $this->fieldLabel('UseLevelTitle')
-            )
+        $fields->insertAfter(
+            Tab::create(
+                'Links',
+                $this->fieldLabel('Links')
+            ),
+            'Main'
+        );
+        
+        // Add Links Fields:
+        
+        $fields->addFieldsToTab(
+            'Root.Links',
+            [
+                DropdownField::create(
+                    'LinkMode',
+                    $this->fieldLabel('LinkMode'),
+                    $this->getLinkModeOptions()
+                ),
+                PageMultiselectField::create(
+                    'LinkedPages',
+                    $this->fieldLabel('LinkedPages')
+                )
+            ]
         );
         
         // Create Options Fields:
@@ -157,8 +200,8 @@ class LevelNavigation extends BaseComponent
                         $this->getSortByOptions()
                     ),
                     CheckboxField::create(
-                        'ShowCount',
-                        $this->fieldLabel('ShowCount')
+                        'ShowIcons',
+                        $this->fieldLabel('ShowIcons')
                     )
                 ]
             )
@@ -184,28 +227,16 @@ class LevelNavigation extends BaseComponent
         
         // Define Field Labels:
         
+        $labels['Links'] = _t(__CLASS__ . '.LINKS', 'Links');
         $labels['SortBy'] = _t(__CLASS__ . '.SORTBY', 'Sort by');
-        $labels['ShowCount'] = _t(__CLASS__ . '.SHOWNUMBEROFCHILDREN', 'Show number of children in each section');
-        $labels['UseLevelTitle'] = _t(__CLASS__ . '.USELEVELTITLE', 'Use title of current level for component title');
+        $labels['LinkMode'] = _t(__CLASS__ . '.LINKMODE', 'Mode');
+        $labels['ShowIcons'] = _t(__CLASS__ . '.SHOWICONS', 'Show icons');
+        $labels['LinkedPages'] = _t(__CLASS__ . '.LINKEDPAGES', 'Pages');
         $labels['NavigationOptions'] = _t(__CLASS__ . '.NAVIGATION', 'Navigation');
         
         // Answer Field Labels:
         
         return $labels;
-    }
-    
-    /**
-     * Answers the title of the component for the template.
-     *
-     * @return string
-     */
-    public function getTitleText()
-    {
-        if ($this->UseLevelTitle && ($level = $this->getLevel())) {
-            return $level->MenuTitle;
-        }
-        
-        return parent::getTitleText();
     }
     
     /**
@@ -215,7 +246,7 @@ class LevelNavigation extends BaseComponent
      */
     public function getWrapperClassNames()
     {
-        $classes = ['level'];
+        $classes = ['inline'];
         
         $this->extend('updateWrapperClassNames', $classes);
         
@@ -231,81 +262,70 @@ class LevelNavigation extends BaseComponent
     {
         $classes = ['links'];
         
-        if ($this->hasFontIcon()) {
-            $classes[] = 'fa-ul';
-        }
+        $classes[] = ($this->ShowIcons ? 'show-icons' : 'hide-icons');
+        
+        $this->extend('updateListClassNames', $classes);
         
         return $classes;
     }
     
     /**
-     * Answers true to enable list item mode.
+     * Answers a list of all links within the receiver.
      *
-     * @return boolean
+     * @return DataList
      */
-    public function getFontIconListItem()
+    public function getLinks()
     {
-        return true;
+        return $this->getAllChildren();
     }
     
     /**
-     * Answers the page object at the current level.
-     *
-     * @return SiteTree
-     */
-    public function getLevel()
-    {
-        if ($page = $this->getCurrentPage(Page::class)) {
-            
-            if (!$page->Children()->exists()) {
-                
-                $parent = $page->getParent();
-                
-                while ($parent && !$parent->Children()->exists()) {
-                    $parent = $parent->getParent();
-                }
-                
-                return $parent;
-                
-            }
-            
-            return $page;
-            
-        }
-    }
-    
-    /**
-     * Answers a list of the child pages within the current level.
+     * Answers a list of the enabled links within the receiver.
      *
      * @return ArrayList
      */
-    public function getCurrentLevel()
+    public function getEnabledLinks()
     {
-        if ($level = $this->getLevel()) {
-            return $level->Children()->sort($this->getSortOrder());
-        }
-    }
-    
-    /**
-     * Answers true if the object is disabled within the template.
-     *
-     * @return boolean
-     */
-    public function isDisabled()
-    {
-        if ($page = $this->getCurrentPage(Page::class)) {
+        switch ($this->LinkMode) {
             
-            if ($this->getLevel()) {
-                return parent::isDisabled();
-            }
-            
+            case self::MODE_PAGES:
+                
+                $links = ArrayList::create();
+                
+                foreach ($this->LinkedPages() as $page) {
+                    $link = $page->toLink();
+                    $link->setParent($this);
+                    $links->push($link);
+                }
+                
+                break;
+                
+            default:
+                
+                $links = $this->getLinks()->filterByCallback(function ($link) {
+                    return $link->isEnabled();
+                });
+                
         }
         
-        return true;
+        return $links->sort($this->getSortOrder());
     }
     
     /**
-     * Answers the sort order for the level navigation.
+     * Answers an array of options for the link mode field.
+     *
+     * @return array
+     */
+    public function getLinkModeOptions()
+    {
+        return [
+            self::MODE_LINKS => _t(__CLASS__ . '.LINKS', 'Links'),
+            self::MODE_PAGES => _t(__CLASS__ . '.PAGES', 'Pages')
+        ];
+    }
+    
+    /**
+     * Answers the sort order for the navigation.
      *
      * @return string
      */
