@@ -14,13 +14,3 @@
  * @license https://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
  * @link https://github.com/praxisnetau/silverware-navigation
  */
-
-// Define Module Constants:
-
-if (!defined('SILVERWARE_NAVIGATION_DIR')) {
-    define('SILVERWARE_NAVIGATION_DIR', basename(__DIR__));
-}
-
-if (!defined('SILVERWARE_NAVIGATION_PATH')) {
-    define('SILVERWARE_NAVIGATION_PATH', realpath(__DIR__));
-}
