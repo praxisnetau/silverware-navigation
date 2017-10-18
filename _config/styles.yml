@@ -20,6 +20,7 @@ SilverWare\Grid\Frameworks\Bootstrap\Framework:
       button: navbar-toggler
       button-icon: navbar-toggler-icon
       collapse: navbar-collapse
+      column: navbar-column
       dropdown: dropdown
       dropdown-item: dropdown-item
       dropdown-menu: dropdown-menu
@@ -31,12 +32,18 @@ SilverWare\Grid\Frameworks\Bootstrap\Framework:
       expand-huge: navbar-expand-xl
       fg-light: navbar-dark
       fg-dark: navbar-light
-      item-align-start: justify-content-start
-      item-align-center: justify-content-center
-      item-align-end: justify-content-end
-      item-align-between: justify-content-between
-      item-align-around:  justify-content-around
+      item-align-start: align-items-start
+      item-align-center: align-items-center
+      item-align-end: align-items-end
+      item-align-baseline: align-items-baseline
+      item-align-stretch:  align-items-stretch
+      item-justify-start: justify-content-start
+      item-justify-center: justify-content-center
+      item-justify-end: justify-content-end
+      item-justify-between: justify-content-between
+      item-justify-around:  justify-content-around
       nav: navbar-nav
       nav-item: nav-item
       nav-link: nav-link
+      row: navbar-row
       text: navbar-text

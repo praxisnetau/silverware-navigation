@@ -1,0 +1,65 @@
+/* Bar Navigation Styles
+===================================================================================================================== */
+
+.barnavigation {
+  
+  // Navbar Row (collapsed):
+  
+  .navbar-row {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  // Navbar Column:
+  
+  .navbar-column {
+    flex-direction: column;
+  }
+  
+  // Links Item Styles:
+  
+  .linksitem {
+    
+    ul.links {
+      
+      margin: 0;
+      padding: 0;
+      font-size: 0;
+      list-style-type: none;
+      
+      > li {
+        display: inline-block;
+      }
+      
+    }
+    
+  }
+  
+}
+
+// Media Queries:
+
+.navbar-expand {
+  
+  @each $breakpoint in map-keys($grid-breakpoints) {
+    
+    $next: breakpoint-next($breakpoint, $grid-breakpoints);
+    $infix: breakpoint-infix($next, $grid-breakpoints);
+    
+    &#{$infix} {
+      
+      @include media-breakpoint-up($next) {
+        
+        // Navbar Row (expanded):
+        
+        .navbar-row {
+          flex-direction: row;
+        }
+        
+      }
+      
+    }
+    
+  }
+  
+}
