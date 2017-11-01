@@ -176,7 +176,7 @@ class BarNavigation extends BaseComponent
         'BrandLinkDisabled' => 0,
         'ButtonAlignment' => 'right',
         'ItemAlign' => 'center',
-        'ItemJustify' => 'center',
+        'ItemJustify' => 'end',
         'ExpandOn' => 'medium',
         'HideTitle' => 1
     ];
