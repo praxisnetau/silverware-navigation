@@ -2,7 +2,7 @@
   
   <% if $Breakpoint %>@media (min-width: {$Breakpoint}) {<% end_if %>
     
-    {$CSSID} img.navbar-brand-logo {
+    {$Up.CSSID} img.navbar-brand-logo {
       width: {$Width}px;
       height: {$Height}px;
     }
