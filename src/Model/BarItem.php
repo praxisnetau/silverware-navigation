@@ -63,6 +63,14 @@ class BarItem extends Component
     private static $icon = 'silverware/navigation: admin/client/dist/images/icons/BarItem.png';
     
     /**
+     * Defines the table name to use for this object.
+     *
+     * @var string
+     * @config
+     */
+    private static $table_name = 'SilverWare_Navigation_BarItem';
+    
+    /**
      * Defines an ancestor class to hide from the admin interface.
      *
      * @var string

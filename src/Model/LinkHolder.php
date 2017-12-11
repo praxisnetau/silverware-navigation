@@ -77,6 +77,14 @@ class LinkHolder extends BaseComponent
     private static $description = 'A component which holds a series of links';
     
     /**
+     * Defines the table name to use for this object.
+     *
+     * @var string
+     * @config
+     */
+    private static $table_name = 'SilverWare_Navigation_LinkHolder';
+    
+    /**
      * Defines an ancestor class to hide from the admin interface.
      *
      * @var string
