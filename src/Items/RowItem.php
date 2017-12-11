@@ -55,6 +55,14 @@ class RowItem extends BarItem
     private static $description = 'A bar item to group together other items in a row';
     
     /**
+     * Defines the table name to use for this object.
+     *
+     * @var string
+     * @config
+     */
+    private static $table_name = 'SilverWare_Navigation_RowItem';
+    
+    /**
      * Defines an ancestor class to hide from the admin interface.
      *
      * @var string

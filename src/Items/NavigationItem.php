@@ -60,6 +60,14 @@ class NavigationItem extends BarItem
     private static $description = 'A bar item which shows the main navigation';
     
     /**
+     * Defines the table name to use for this object.
+     *
+     * @var string
+     * @config
+     */
+    private static $table_name = 'SilverWare_Navigation_NavigationItem';
+    
+    /**
      * Defines an ancestor class to hide from the admin interface.
      *
      * @var string
