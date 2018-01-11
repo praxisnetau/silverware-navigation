@@ -82,7 +82,9 @@ class NavigationItem extends BarItem
      * @config
      */
     private static $db = [
-        'ShowSubMenus' => 'Boolean'
+        'ShowSubMenus' => 'Boolean',
+        'AddTopLinkToSub' => 'Boolean',
+        'ShowDivider' => 'Boolean'
     ];
     
     /**
@@ -92,7 +94,9 @@ class NavigationItem extends BarItem
      * @config
      */
     private static $defaults = [
-        'ShowSubMenus' => 1
+        'ShowSubMenus' => 1,
+        'AddTopLinkToSub' => 1,
+        'ShowDivider' => 1
     ];
     
     /**
@@ -118,6 +122,14 @@ class NavigationItem extends BarItem
                         CheckboxField::create(
                             'ShowSubMenus',
                             $this->fieldLabel('ShowSubMenus')
+                        ),
+                        CheckboxField::create(
+                            'AddTopLinkToSub',
+                            $this->fieldLabel('AddTopLinkToSub')
+                        ),
+                        CheckboxField::create(
+                            'ShowDivider',
+                            $this->fieldLabel('ShowDivider')
                         )
                     ]
                 )
@@ -145,6 +157,8 @@ class NavigationItem extends BarItem
         // Define Field Labels:
         
         $labels['ShowSubMenus'] = _t(__CLASS__ . '.SHOWSUBMENUS', 'Show sub-menus');
+        $labels['AddTopLinkToSub'] = _t(__CLASS__ . '.ADDTOPLEVELLINKTOSUBMENU', 'Add top-level link to sub-menu');
+        $labels['ShowDivider'] = _t(__CLASS__ . '.SHOWDIVIDER', 'Show divider');
         $labels['NavigationOptions'] = _t(__CLASS__ . '.NAVIGATION', 'Navigation');
         
         // Answer Field Labels:
@@ -184,7 +198,10 @@ class NavigationItem extends BarItem
     {
         // Define Data Array:
         
-        $data = ['Dropdown' => false];
+        $data = [
+            'Dropdown' => false,
+            'HashLink' => false
+        ];
         
         // Define Initial Styles:
         
@@ -211,6 +228,11 @@ class NavigationItem extends BarItem
             
             $data['Dropdown']   = true;
             $data['DropdownID'] = $this->getDropdownID($segment);
+            
+            // Use Hash Link?
+            
+            $data['HashLink'] = (boolean) $this->AddTopLinkToSub;
+            
         }
         
         // Define Style Classes:
@@ -228,18 +250,29 @@ class NavigationItem extends BarItem
      * Answers an array of class names for a menu link.
      *
      * @param string $mode Linking mode of the current item.
+     * @param boolean $currentOnly Sets as active if the item is current only.
      *
      * @return array
      */
-    public function getMenuLinkClass($mode)
+    public function getMenuLinkClass($mode, $currentOnly = false)
     {
         $styles = ['navbar.dropdown-item'];
         
-        if ($this->isActive($mode)) {
+        if ($currentOnly && $mode == 'current' || !$currentOnly && $this->isActive($mode)) {
             $styles[] = 'navbar.active';
         }
         
         return $this->styles($styles, true);
+    }
+    
+    /**
+     * Answers the class name for a dropdown divider.
+     *
+     * @return string
+     */
+    public function getDividerClass()
+    {
+        return $this->style('navbar.dropdown-divider');
     }
     
     /**
