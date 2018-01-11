@@ -22,6 +22,7 @@ SilverWare\Grid\Frameworks\Bootstrap\Framework:
       collapse: navbar-collapse
       column: navbar-column
       dropdown: dropdown
+      dropdown-divider: dropdown-divider
       dropdown-item: dropdown-item
       dropdown-menu: dropdown-menu
       dropdown-toggle: dropdown-toggle
