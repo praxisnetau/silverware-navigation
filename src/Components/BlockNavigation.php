@@ -20,7 +20,7 @@ namespace SilverWare\Navigation\Components;
 use SilverWare\Navigation\Model\LinkHolder;
 
 /**
- * An extension of the link holder class for inline navigation.
+ * An extension of the link holder class for block navigation.
  *
  * @package SilverWare\Navigation\Components
  * @author Colin Tucker <colin@praxis.net.au>
