@@ -20,7 +20,7 @@ namespace SilverWare\Navigation\Components;
 use SilverWare\Navigation\Model\LinkHolder;
 
 /**
- * An extension of the link holder class for inline navigation.
+ * An extension of the link holder class for block navigation.
  *
  * @package SilverWare\Navigation\Components
  * @author Colin Tucker <colin@praxis.net.au>
@@ -77,4 +77,18 @@ class BlockNavigation extends LinkHolder
      * @config
      */
     private static $hide_ancestor = LinkHolder::class;
+    
+    /**
+     * Answers an array of wrapper class names for the HTML template.
+     *
+     * @return array
+     */
+    public function getWrapperClassNames()
+    {
+        $classes = parent::getWrapperClassNames();
+        
+        $classes[] = 'block';
+        
+        return $classes;
+    }
 }

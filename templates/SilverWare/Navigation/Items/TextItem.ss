@@ -1,3 +1,1 @@
-<span $AttributesHTML>
-  $Title
-</span>
+<span $AttributesHTML>{$FontIconTag}{$Title}</span>

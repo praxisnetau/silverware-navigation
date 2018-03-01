@@ -19,6 +19,7 @@ namespace SilverWare\Navigation\Model;
 
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 use SilverStripe\Forms\Tab;
 use SilverStripe\ORM\ArrayList;
 use SilverWare\Components\BaseComponent;
@@ -107,6 +108,8 @@ class LinkHolder extends BaseComponent
      * @config
      */
     private static $db = [
+        'HeaderContent' => 'HTMLText',
+        'FooterContent' => 'HTMLText',
         'LinkMode' => 'Varchar(8)',
         'SortBy' => 'Varchar(16)',
         'ShowIcons' => 'Boolean'
@@ -166,6 +169,22 @@ class LinkHolder extends BaseComponent
         // Obtain Field Objects (from parent):
         
         $fields = parent::getCMSFields();
+        
+        // Create Main Fields:
+        
+        $fields->addFieldsToTab(
+            'Root.Main',
+            [
+                HTMLEditorField::create(
+                    'HeaderContent',
+                    $this->fieldLabel('HeaderContent')
+                )->setRows(10),
+                HTMLEditorField::create(
+                    'FooterContent',
+                    $this->fieldLabel('FooterContent')
+                )->setRows(10)
+            ]
+        );
         
         // Insert Links Tab:
         
@@ -240,6 +259,8 @@ class LinkHolder extends BaseComponent
         $labels['LinkMode'] = _t(__CLASS__ . '.LINKMODE', 'Mode');
         $labels['ShowIcons'] = _t(__CLASS__ . '.SHOWICONS', 'Show icons');
         $labels['LinkedPages'] = _t(__CLASS__ . '.LINKEDPAGES', 'Pages');
+        $labels['HeaderContent'] = _t(__CLASS__ . '.HEADERCONTENT', 'Header content');
+        $labels['FooterContent'] = _t(__CLASS__ . '.FOOTERCONTENT', 'Footer content');
         $labels['NavigationOptions'] = _t(__CLASS__ . '.NAVIGATION', 'Navigation');
         
         // Answer Field Labels:
@@ -254,7 +275,7 @@ class LinkHolder extends BaseComponent
      */
     public function getWrapperClassNames()
     {
-        $classes = ['inline'];
+        $classes = ['link-holder'];
         
         $this->extend('updateWrapperClassNames', $classes);
         

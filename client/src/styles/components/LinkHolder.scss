@@ -1,0 +1,24 @@
+/* Link Holder Styles
+===================================================================================================================== */
+
+.linkholder {
+  
+  div.content {
+    
+    > header,
+    > footer {
+      
+      >:last-child {
+        margin-bottom: 0;
+      }
+      
+    }
+    
+    header + nav.link-holder,
+    nav.link-holder + footer {
+      margin-top: $spacer;
+    }
+    
+  }
+  
+}

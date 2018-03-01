@@ -17,6 +17,7 @@
 
 namespace SilverWare\Navigation\Items;
 
+use SilverWare\FontIcons\Extensions\FontIconExtension;
 use SilverWare\Navigation\Model\BarItem;
 
 /**
@@ -69,6 +70,16 @@ class TextItem extends BarItem
      * @config
      */
     private static $hide_ancestor = BarItem::class;
+    
+    /**
+     * Defines the extension classes to apply to this object.
+     *
+     * @var array
+     * @config
+     */
+    private static $extensions = [
+        FontIconExtension::class
+    ];
     
     /**
      * Answers a list of field objects for the CMS interface.
