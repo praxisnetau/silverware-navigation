@@ -1,3 +1,8 @@
+<% if $HeaderContent %>
+  <header>
+    $HeaderContent
+  </header>
+<% end_if %>
 <nav class="$WrapperClass">
   <% if $EnabledLinks %>
     <ul class="$ListClass">
@@ -7,3 +12,8 @@
     </ul>
   <% end_if %>
 </nav>
+<% if $FooterContent %>
+  <footer>
+    $FooterContent
+  </footer>
+<% end_if %>

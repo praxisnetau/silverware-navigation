@@ -77,4 +77,18 @@ class BlockNavigation extends LinkHolder
      * @config
      */
     private static $hide_ancestor = LinkHolder::class;
+    
+    /**
+     * Answers an array of wrapper class names for the HTML template.
+     *
+     * @return array
+     */
+    public function getWrapperClassNames()
+    {
+        $classes = parent::getWrapperClassNames();
+        
+        $classes[] = 'block';
+        
+        return $classes;
+    }
 }
