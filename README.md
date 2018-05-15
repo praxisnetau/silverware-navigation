@@ -41,25 +41,55 @@ configuration file.
 
 This module provides a series of navigation-related components:
 
+- Anchor Navigation
 - Bar Navigation
+- Block Navigation
+- Button Navigation
 - Crumb Navigation
+- Icon Navigation
+- Inline Navigation
 - Level Navigation
+- List Navigation
 
 These components can be added to your SilverWare templates or layouts using the CMS.
+
+### Anchor Navigation
+
+The Anchor Navigation component shows a list of links to anchors within the current page's content.
 
 ### Bar Navigation
 
 The Bar Navigation component represents a standard [Bootstrap navbar][bootstrap-navbar].
+
+### Block Navigation
+
+The Block Navigation component renders a series of Link components in a block layout.
+
+### Button Navigation
+
+The Button Navigation component renders a series of Button components in an inline layout.
 
 ### Crumb Navigation
 
 The Crumb Navigation component is used to add [Bootstrap breadcrumb][bootstrap-breadcrumb]
 navigation to your template or layout.
 
+### Icon Navigation
+
+The Icon Navigation component renders a series of Link components as icons in an inline layout.
+
+### Inline Navigation
+
+The Inline Navigation component renders a series of Link components in an inline layout.
+
 ### Level Navigation
 
 The Level Navigation component is typically added to a sidebar to provide navigation for
 the current page level, i.e. all of the pages within the current section.
+
+### List Navigation
+
+The List Navigation component renders a series of Link components as a list (similar to Level Navigation).
 
 ## Issues
 
