@@ -1,0 +1,26 @@
+/* List Navigation Styles
+===================================================================================================================== */
+
+.listnavigation {
+  
+  ul.links {
+    
+    margin-bottom: 0;
+    
+    > li {
+      
+      i.fa {
+        top: 0;
+        color: $gray-700;
+        line-height: $line-height-base;
+      }
+      
+      a {
+        color: inherit;
+      }
+      
+    }
+    
+  }
+  
+}
