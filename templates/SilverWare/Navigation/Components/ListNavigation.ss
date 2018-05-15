@@ -11,7 +11,7 @@
           <% if $Up.ShowIcons %>
             {$Up.getLinkFontIconTag($FontIcon)}
           <% end_if %>
-          <a href="$Link" title="$MenuTitle">$MenuTitle</a>
+          <a $LinkAttributesHTML>$MenuTitle</a>
         </li>
       <% end_loop %>
     </ul>
