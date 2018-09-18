@@ -84,7 +84,8 @@ class NavigationItem extends BarItem
     private static $db = [
         'ShowSubMenus' => 'Boolean',
         'AddTopLinkToSub' => 'Boolean',
-        'ShowDivider' => 'Boolean'
+        'ShowDivider' => 'Boolean',
+        'MultiLevelSubMenus' => 'Boolean'
     ];
     
     /**
@@ -96,7 +97,18 @@ class NavigationItem extends BarItem
     private static $defaults = [
         'ShowSubMenus' => 1,
         'AddTopLinkToSub' => 1,
-        'ShowDivider' => 1
+        'ShowDivider' => 1,
+        'MultiLevelSubMenus' => 0
+    ];
+    
+    /**
+     * Defines which menu modes are to be highlighted when active (i.e. section, current).
+     *
+     * @var array
+     * @config
+     */
+    private static $active_menu_modes = [
+        'current'
     ];
     
     /**
@@ -122,6 +134,10 @@ class NavigationItem extends BarItem
                         CheckboxField::create(
                             'ShowSubMenus',
                             $this->fieldLabel('ShowSubMenus')
+                        ),
+                        CheckboxField::create(
+                            'MultiLevelSubMenus',
+                            $this->fieldLabel('MultiLevelSubMenus')
                         ),
                         CheckboxField::create(
                             'AddTopLinkToSub',
@@ -157,6 +173,7 @@ class NavigationItem extends BarItem
         // Define Field Labels:
         
         $labels['ShowSubMenus'] = _t(__CLASS__ . '.SHOWSUBMENUS', 'Show sub-menus');
+        $labels['MultiLevelSubMenus'] = _t(__CLASS__ . '.MULTILEVELSUBMENUS', 'Multi-level sub-menus');
         $labels['AddTopLinkToSub'] = _t(__CLASS__ . '.ADDTOPLEVELLINKTOSUBMENU', 'Add top-level link to sub-menu');
         $labels['ShowDivider'] = _t(__CLASS__ . '.SHOWDIVIDER', 'Show divider');
         $labels['NavigationOptions'] = _t(__CLASS__ . '.NAVIGATION', 'Navigation');
@@ -176,6 +193,12 @@ class NavigationItem extends BarItem
         // Obtain Class Names:
         
         $classes = $this->styles('navbar.nav');
+        
+        // Merge Additional Class Names:
+        
+        if ($this->MultiLevelSubMenus) {
+            $classes[] = 'multi-level';
+        }
         
         // Answer Class Names:
         
@@ -250,15 +273,17 @@ class NavigationItem extends BarItem
      * Answers an array of class names for a menu link.
      *
      * @param string $mode Linking mode of the current item.
-     * @param boolean $currentOnly Sets as active if the item is current only.
+     * @param string $dropdown Is this menu link a dropdown toggle?
      *
      * @return array
      */
-    public function getMenuLinkClass($mode, $currentOnly = false)
+    public function getMenuLinkClass($mode, $dropdown = false)
     {
         $styles = ['navbar.dropdown-item'];
         
-        if ($currentOnly && $mode == 'current' || !$currentOnly && $this->isActive($mode)) {
+        if ($dropdown) {
+            $styles[] = 'navbar.dropdown-toggle';
+        } elseif ($this->isActive($mode)) {
             $styles[] = 'navbar.active';
         }
         
@@ -298,7 +323,7 @@ class NavigationItem extends BarItem
      */
     protected function isActive($mode)
     {
-        return in_array($mode, ['current', 'section']);
+        return in_array($mode, $this->config()->active_menu_modes);
     }
     
     /**

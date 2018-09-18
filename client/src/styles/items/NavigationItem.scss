@@ -1,0 +1,54 @@
+/* Navigation Item Styles
+===================================================================================================================== */
+
+.navigationitem {
+  
+  .dropdown-menu {
+    margin: $spacer-half $spacer-half 0;
+  }
+  
+}
+
+// Media Queries:
+
+.navbar-expand {
+  
+  @each $breakpoint in map-keys($grid-breakpoints) {
+    
+    $next: breakpoint-next($breakpoint, $grid-breakpoints);
+    $infix: breakpoint-infix($next, $grid-breakpoints);
+    
+    &#{$infix} {
+      
+      @include media-breakpoint-up($next) {
+        
+        // Dropdown Menu (expanded):
+        
+        .navigationitem {
+          
+          .dropdown-menu {
+            
+            margin: 0;
+            
+            .dropdown-item {
+              position: relative;
+            }
+            
+            .dropdown-toggle::after{
+              position: absolute;
+              top: 45%;
+              right: $spacer-quarter;
+              transform: rotate(-90deg);
+            }
+            
+          }
+          
+        }
+        
+      }
+      
+    }
+    
+  }
+  
+}
