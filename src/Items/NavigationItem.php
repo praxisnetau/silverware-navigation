@@ -18,8 +18,10 @@
 namespace SilverWare\Navigation\Items;
 
 use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\TextField;
 use SilverStripe\View\ArrayData;
 use SilverWare\Forms\FieldSection;
+use SilverWare\Forms\ToggleGroup;
 use SilverWare\Navigation\Model\BarItem;
 use SilverWare\Tools\ViewTools;
 use PageController;
@@ -85,7 +87,8 @@ class NavigationItem extends BarItem
         'ShowSubMenus' => 'Boolean',
         'AddTopLinkToSub' => 'Boolean',
         'ShowDivider' => 'Boolean',
-        'MultiLevelSubMenus' => 'Boolean'
+        'MultiLevelSubMenus' => 'Boolean',
+        'MaximumSubMenuLevel' => 'AbsoluteInt'
     ];
     
     /**
@@ -131,24 +134,30 @@ class NavigationItem extends BarItem
                     'NavigationOptions',
                     $this->fieldLabel('NavigationOptions'),
                     [
-                        CheckboxField::create(
+                        ToggleGroup::create(
                             'ShowSubMenus',
-                            $this->fieldLabel('ShowSubMenus')
-                        ),
-                        CheckboxField::create(
-                            'MultiLevelSubMenus',
-                            $this->fieldLabel('MultiLevelSubMenus')
-                        ),
-                        CheckboxField::create(
-                            'AddTopLinkToSub',
-                            $this->fieldLabel('AddTopLinkToSub')
-                        ),
-                        CheckboxField::create(
-                            'ShowDivider',
-                            $this->fieldLabel('ShowDivider')
-                        )
+                            $this->fieldLabel('ShowSubMenus'),
+                            [
+                                CheckboxField::create(
+                                    'MultiLevelSubMenus',
+                                    $this->fieldLabel('MultiLevelSubMenus')
+                                ),
+                                CheckboxField::create(
+                                    'AddTopLinkToSub',
+                                    $this->fieldLabel('AddTopLinkToSub')
+                                ),
+                                CheckboxField::create(
+                                    'ShowDivider',
+                                    $this->fieldLabel('ShowDivider')
+                                ),
+                                TextField::create(
+                                    'MaximumSubMenuLevel',
+                                    $this->fieldLabel('MaximumSubMenuLevel')
+                                )
+                            ]
+                        )->addExtraClass('sub-menu-options')
                     ]
-                )
+                )->addExtraClass('navigation-item-options')
             ]
         );
         
@@ -177,6 +186,7 @@ class NavigationItem extends BarItem
         $labels['AddTopLinkToSub'] = _t(__CLASS__ . '.ADDTOPLEVELLINKTOSUBMENU', 'Add top-level link to sub-menu');
         $labels['ShowDivider'] = _t(__CLASS__ . '.SHOWDIVIDER', 'Show divider');
         $labels['NavigationOptions'] = _t(__CLASS__ . '.NAVIGATION', 'Navigation');
+        $labels['MaximumSubMenuLevel'] = _t(__CLASS__ . '.MAXIMUMSUBMENULEVEL', 'Maximum sub-menu level');
         
         // Answer Field Labels:
         
